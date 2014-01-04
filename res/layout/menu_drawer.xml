@@ -1,0 +1,74 @@
+<?xml version="1.0" encoding="utf-8"?>
+<ScrollView xmlns:android="http://schemas.android.com/apk/res/android"
+    android:layout_width="match_parent"
+    android:layout_height="match_parent" >
+
+    <LinearLayout
+        android:layout_width="match_parent"
+        android:layout_height="wrap_content"
+        android:orientation="vertical" >
+
+        <TextView
+            android:id="@+id/menuDrawerTimeline"
+            style="@style/MenuDrawer.Widget.Title"
+            android:layout_width="match_parent"
+            android:layout_height="wrap_content"
+            android:drawableLeft="@drawable/ic_menu_home"
+            android:text="@string/timeline" />
+
+        <TextView
+            android:id="@+id/menuDrawerSearch"
+            style="@style/MenuDrawer.Widget.Title"
+            android:layout_width="match_parent"
+            android:layout_height="wrap_content"
+            android:drawableLeft="@android:drawable/ic_menu_search"
+            android:text="@string/search" />
+
+        <TextView
+            android:id="@+id/menuDrawerProfile"
+            style="@style/MenuDrawer.Widget.Title"
+            android:layout_width="match_parent"
+            android:layout_height="wrap_content"
+            android:drawableLeft="@android:drawable/ic_menu_myplaces"
+            android:text="@string/profile" />
+
+        <TextView
+            style="@style/MenuDrawer.Widget.Category"
+            android:layout_width="match_parent"
+            android:layout_height="wrap_content"
+            android:text="@string/ranking" />
+
+        <TextView
+            android:id="@+id/menuDrawerRankingOverall"
+            style="@style/MenuDrawer.Widget.Title"
+            android:layout_width="match_parent"
+            android:layout_height="wrap_content"
+            android:drawableLeft="@android:drawable/ic_dialog_dialer"
+            android:text="@string/overall" />
+
+        <TextView
+            android:id="@+id/menuDrawerRankingIllust"
+            style="@style/MenuDrawer.Widget.Title"
+            android:layout_width="match_parent"
+            android:layout_height="wrap_content"
+            android:drawableLeft="@android:drawable/ic_menu_gallery"
+            android:text="@string/illust" />
+
+        <TextView
+            android:id="@+id/menuDrawerRankingManga"
+            style="@style/MenuDrawer.Widget.Title"
+            android:layout_width="match_parent"
+            android:layout_height="wrap_content"
+            android:drawableLeft="@android:drawable/ic_menu_gallery"
+            android:text="@string/manga" />
+
+        <TextView
+            android:id="@+id/menuDrawerRankingNovel"
+            style="@style/MenuDrawer.Widget.Title"
+            android:layout_width="match_parent"
+            android:layout_height="wrap_content"
+            android:drawableLeft="@android:drawable/ic_menu_agenda"
+            android:text="@string/novel" />
+    </LinearLayout>
+
+</ScrollView>

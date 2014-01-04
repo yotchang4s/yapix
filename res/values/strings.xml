@@ -1,0 +1,54 @@
+<?xml version="1.0" encoding="utf-8"?>
+<resources>
+
+    <string name="app_name">Yapix</string>
+
+    <string-array name="ranking_type_overall">
+        <item>デイリー</item>
+        <item>ウィークリー</item>
+        <item>マンスリー</item>
+        <item>ルーキー</item>
+        <item>オリジナル</item>
+        <item>男子に人気</item>
+        <item>女子に人気</item>
+        <item>過去ランキング</item>
+    </string-array>
+    <string-array name="ranking_type_illust">
+        <item>デイリー</item>
+        <item>ウィークリー</item>
+        <item>マンスリー</item>
+        <item>ルーキー</item>
+        <item>男子に人気(R18)</item>
+        <item>女子に人気(R18)</item>
+        <item>過去ランキング</item>
+    </string-array>
+    <string-array name="ranking_type_manga">
+        <item>デイリー</item>
+        <item>ウィークリー</item>
+        <item>マンスリー</item>
+        <item>ルーキー</item>
+        <item>男子に人気(R18)</item>
+        <item>女子に人気(R18)</item>
+        <item>過去ランキング</item>
+    </string-array>
+    <string-array name="ranking_type_novel">
+        <item>デイリー</item>
+        <item>ウィークリー</item>
+        <item>ルーキー</item>
+        <item>過去ランキング</item>
+    </string-array>
+
+    <string name="userName">ユーザー名</string>
+    <string name="password">パスワード</string>
+    <string name="general">一般</string>
+    <string name="r18">R-18</string>
+    <string name="timeline">タイムライン</string>
+    <string name="search">検索</string>
+    <string name="profile">プロフィール</string>
+    <string name="ranking">ランキング</string>
+    <string name="overall">総合</string>
+    <string name="illust">イラスト</string>
+    <string name="manga">漫画</string>
+    <string name="novel">小説</string>
+
+</resources>

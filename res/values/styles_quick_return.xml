@@ -1,0 +1,40 @@
+<resources xmlns:android="http://schemas.android.com/apk/res/android">
+
+    <style name="QuickReturn">
+        <item name="android:layout_width">match_parent</item>
+        <item name="android:layout_height">300dp</item>
+    </style>
+
+    <style name="QuickReturn.Sticky">
+        <item name="android:background">@drawable/qr_background</item>
+        <item name="android:textColor">@color/sticky_item_text</item>
+        <item name="android:layout_height">50dp</item>
+        <item name="android:gravity">center_vertical</item>
+        <item name="android:textAppearance">?android:textAppearanceLarge</item>
+        <item name="android:textAllCaps">true</item>
+        <!-- v16 -->
+        <item name="android:fontFamily">sans-serif-light</item>
+        <item name="android:focusable">false</item>
+    </style>
+
+    <style name="Ranking.Dropdown" parent="QuickReturn.Sticky">
+        <item name="android:paddingLeft">30sp</item>
+    </style>
+
+    <style name="Ranking.Dropdown.Text">
+        <item name="android:layout_width">0dp</item>
+        <item name="android:layout_weight">1</item>
+    </style>
+
+    <style name="Ranking.Dropdown.R18Switch">
+        <item name="android:layout_width">wrap_content</item>
+        <item name="android:layout_height">match_parent</item>
+        <item name="android:checked">false</item>
+        <item name="android:gravity">center_vertical</item>
+        <item name="android:textOn">@string/r18</item>
+        <item name="android:textOff">@string/general</item>
+        <item name="android:background">@color/windowBackground</item>
+        <item name="android:paddingRight">5sp</item>
+    </style>
+
+</resources>

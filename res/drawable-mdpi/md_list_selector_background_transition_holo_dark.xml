@@ -1,0 +1,6 @@
+<transition xmlns:android="http://schemas.android.com/apk/res/android" >
+
+    <item android:drawable="@drawable/md_list_pressed_holo_dark"/>
+    <item android:drawable="@drawable/md_list_longpressed_holo"/>
+
+</transition>

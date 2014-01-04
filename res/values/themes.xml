@@ -1,0 +1,13 @@
+<resources>
+
+    <style name="YapixTheme" parent="@android:style/Theme.Holo.Light">
+        <item name="android:windowBackground">@color/windowBackground</item>
+        <item name="android:actionBarStyle">@style/YapixTheme.ActionbarStyle</item>
+        <item name="menuDrawerStyle">@style/MenuDrawerStyle</item>
+    </style>
+
+    <style name="YapixTheme.ActionbarStyle" parent="@android:style/Widget.Holo.Light.ActionBar">
+        <item name="android:background">@color/actionbarBackground</item>
+    </style>
+
+</resources>
