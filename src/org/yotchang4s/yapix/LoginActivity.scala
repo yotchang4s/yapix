@@ -28,8 +28,6 @@ class LoginActivity extends FragmentActivity { loginActivity =>
     val loginPixivPasswordEditText = findViewById(R.id.login_pixiv_password).asInstanceOf[EditText]
     val loginButton = findViewById(R.id.login_button)
 
-    checkFieldsForEmptyValues
-
     for {
       id <- YapixConfig.yapixConfig.pixivId
       ps <- YapixConfig.yapixConfig.pixivPassword
@@ -37,6 +35,7 @@ class LoginActivity extends FragmentActivity { loginActivity =>
       loginPixivIdEditText.setText(id)
       loginPixivPasswordEditText.setText(ps)
 
+      checkFieldsForEmptyValues
       authcation
     }
 
