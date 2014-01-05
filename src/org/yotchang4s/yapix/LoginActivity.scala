@@ -15,9 +15,14 @@ import org.yotchang4s.pixiv._
 import org.yotchang4s.pixiv.auth._
 import android.support.v4.app.FragmentActivity
 import android.app.ProgressDialog
+import android.app.Dialog
 
 class LoginActivity extends FragmentActivity { loginActivity =>
-  val TAG = getClass.getName
+  private[this] val TAG = getClass.getName
+
+  private[this] val PROGRESS_DIALOG = 1
+
+  private[this] var progressDialog: ProgressDialog = null
 
   protected override def onCreate(savedInstanceState: Bundle) {
     super.onCreate(savedInstanceState)
@@ -76,17 +81,35 @@ class LoginActivity extends FragmentActivity { loginActivity =>
     overridePendingTransition(0, 0);
   }
 
+  protected override def onCreateDialog(id: Int): Dialog = {
+    val dialog = super.onCreateDialog(id)
+    id match {
+      case PROGRESS_DIALOG =>
+        progressDialog = new ProgressDialog(LoginActivity.this);
+        progressDialog.setTitle("ログイン中");
+        progressDialog.setMessage("お待ちください");
+        progressDialog.setIndeterminate(true);
+        progressDialog.setProgressStyle(ProgressDialog.STYLE_SPINNER);
+        progressDialog
+
+      case _ => dialog
+    }
+  }
+
+  protected override def onPause {
+    super.onPause
+
+    if (progressDialog != null) {
+      progressDialog = null;
+      dismissDialog(PROGRESS_DIALOG) // ダイアログのグルグルを終了
+    }
+  }
+
   class LoginTask extends AsyncTask[Option[Nothing], Option[Nothing], AuthResult] {
-    var progressDialog: ProgressDialog = null
 
     protected override def onPreExecute {
-      progressDialog = new ProgressDialog(LoginActivity.this);
-      progressDialog.setTitle("ログイン中");
-      progressDialog.setTitle("お待ちください");
-      progressDialog.setIndeterminate(true);
-      progressDialog.setProgressStyle(ProgressDialog.STYLE_SPINNER);
 
-      progressDialog.show
+      showDialog(PROGRESS_DIALOG)
     }
 
     protected override def doInBackground(params: Option[Nothing]): AuthResult = {
@@ -110,7 +133,7 @@ class LoginActivity extends FragmentActivity { loginActivity =>
           Toast.makeText(loginActivity, "ログインに失敗しました\n" + msg, Toast.LENGTH_LONG).show;
       }
 
-      progressDialog.dismiss
+      dismissDialog(PROGRESS_DIALOG)
     }
   }
 }

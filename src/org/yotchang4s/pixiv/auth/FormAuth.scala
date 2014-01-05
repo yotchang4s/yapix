@@ -69,7 +69,8 @@ case class FormAuth extends AbstractResourceDelegator {
         case None => AuthFailure("Login PHPSESSID is not found")
       }
     } catch {
-      case e: PixivException => AuthFailure("IO Error", Some(e))
+      case e: IOException => AuthFailure("IO Error",
+        Some(new PixivException(PixivException.IOError, Some(e))))
     }
   }
 }
