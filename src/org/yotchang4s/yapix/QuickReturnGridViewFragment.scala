@@ -48,10 +48,10 @@ trait QuickReturnGridViewFragment extends Fragment {
       new ViewTreeObserver.OnGlobalLayoutListener {
         def onGlobalLayout {
           quickReturnHeight = quickReturnView.getHeight
-          observableGrideView.computeScrollY
           cachedVerticalScrollRange = observableGrideView.getGridHeight
           // 要素0対策
-          if (observableGrideView.getAdapter.getCount() == 0) {
+          val adapter = observableGrideView.getAdapter
+          if (adapter == null || adapter.getCount == 0) {
             onScroll(observableGrideView, -1, 0, 0)
           }
         }

@@ -19,10 +19,10 @@ import com.android.volley.toolbox.NetworkImageView
 import com.android.volley.toolbox.ImageLoader
 
 class ListGridViewImageAdapter[T <: Illust](
-  gridView: ObservableGridView,
+  context: Context,
   imageDip: Int,
   paddingDip: Int)
-  extends GridViewSquareDipAdapter[NetworkImageView](gridView, imageDip, paddingDip) {
+  extends GridViewSquareDipAdapter[NetworkImageView](context, imageDip, paddingDip) {
 
   private var dip: Int = 0
   private var list: List[T] = Nil
@@ -83,7 +83,7 @@ class ListGridViewImageAdapter[T <: Illust](
   }
 
   def createView(position: Int, convertView: View, parent: ViewGroup): NetworkImageView = {
-    val tv = new NetworkImageView(gridView.getContext)
+    val tv = new NetworkImageView(context)
 
     tv.setBackgroundColor(Color.rgb(0, 153, 204))
     tv
@@ -91,8 +91,6 @@ class ListGridViewImageAdapter[T <: Illust](
 
   def setList(list: List[T]) {
     this.list = if (list != null) list else Nil
-    gridView.computeScrollY
-    notifyDataSetChanged
   }
 
   def getList: List[T] = list

@@ -4,7 +4,7 @@ import android.content.Context
 import android.view._
 import android.widget._
 
-abstract class GridViewSquareDipAdapter[+V <: View](gridView: GridView, squareViewDip: Int, paddingDip: Int) extends BaseAdapter {
+abstract class GridViewSquareDipAdapter[+V <: View](context: Context, squareViewDip: Int, paddingDip: Int) extends BaseAdapter {
 
   def createView(position: Int, convertView: View, parent: ViewGroup): V
 
@@ -14,16 +14,15 @@ abstract class GridViewSquareDipAdapter[+V <: View](gridView: GridView, squareVi
       case x => convertView.asInstanceOf[V]
     }
 
-    val width = dpToPixel(gridView.getContext, squareViewDip)
-    val height = dpToPixel(gridView.getContext, squareViewDip)
+    val width = dpToPixel(context, squareViewDip)
+    val height = dpToPixel(context, squareViewDip)
 
-    val numColumn = parent.getWidth / width
-    
-    val hwidth = parent.getWidth / gridView.getNumColumns
+    val hwidth = parent.getWidth / parent.asInstanceOf[GridView].getNumColumns
+
     view.setLayoutParams(
       new AbsListView.LayoutParams(
-        hwidth - dpToPixel(gridView.getContext, paddingDip),
-        hwidth - dpToPixel(gridView.getContext, paddingDip)))
+        hwidth - dpToPixel(context, paddingDip),
+        hwidth - dpToPixel(context, paddingDip)))
 
     view
   }

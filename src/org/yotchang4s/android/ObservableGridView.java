@@ -9,6 +9,8 @@ public class ObservableGridView extends GridViewV16 {
 	private int mHeight = 0;
 	private int[] mItemOffsetY = new int[0];
 
+	private boolean coumputeScrollY = false;
+
 	public ObservableGridView(Context context) {
 		super(context);
 	}
@@ -22,7 +24,14 @@ public class ObservableGridView extends GridViewV16 {
 	}
 
 	public void computeScrollY() {
-		int itemCount = getAdapter().getCount();
+		if (this.coumputeScrollY) {
+			return;
+		}
+
+		int itemCount = 0;
+		if (getAdapter() != null) {
+			itemCount = getAdapter().getCount();
+		}
 
 		this.mHeight = 0;
 		this.mItemOffsetY = new int[itemCount];
@@ -49,19 +58,31 @@ public class ObservableGridView extends GridViewV16 {
 			}
 			this.mItemOffsetY[i] = beforeHeight;
 		}
+		this.coumputeScrollY = true;
+	}
+
+	public void invalidateComputeScrollY() {
+		this.coumputeScrollY = false;
 	}
 
 	public int getComputedScrollY() {
+		computeScrollY();
 		if (this.mItemOffsetY.length == 0) {
 			return 0;
 		} else {
 			int pos = getFirstVisiblePosition();
 			View view = getChildAt(0);
-			return this.mItemOffsetY[pos] - view.getTop() + getPaddingTop();
+			int scroll = this.mItemOffsetY[pos] + getPaddingTop();
+			if (view != null) {
+				// イラスト単体表示から戻ってきた等の再表示時にnullになる場合がある
+				scroll -= view.getTop();
+			}
+			return scroll;
 		}
 	}
 
 	public int getGridHeight() {
+		computeScrollY();
 		return this.mHeight;
 	}
 }

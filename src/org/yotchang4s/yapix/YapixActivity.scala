@@ -55,7 +55,7 @@ class YapixActivity extends FragmentActivity {
     def changeRankingFragment(rankingFragment: RankingFragment, rankingCategory: RankingCategory, view: View) {
       menuDrawerActiveViewChange(view)
       val bundle = new Bundle
-      bundle.putSerializable(RankingFragment.RankingCategoryKey.key, rankingCategory)
+      bundle.putSerializable(ArgumentKeys.RankingCategory, rankingCategory)
       changeFragment(rankingFragment, Some(bundle))
     }
 
