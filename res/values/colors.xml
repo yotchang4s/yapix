@@ -4,7 +4,6 @@
     <color name="md__transparent">#00000000</color>
     <color name="md__defaultBackground">#069</color>
     <color name="windowBackground">#fff</color>
-    <!-- color name="actionbarBackground">#09c</color -->
-    <color name="actionbarBackground">#09f</color>
+    <color name="actionbarBackground">#09c</color>
 
 </resources>
