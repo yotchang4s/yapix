@@ -3,6 +3,7 @@ package org.yotchang4s.pixiv
 import org.jsoup.nodes._
 import org.yotchang4s.pixiv.auth._
 import org.yotchang4s.pixiv.http._
+import org.yotchang4s.pixiv.PixivException._
 
 private[pixiv] abstract class AbstractResourceDelegator {
 
@@ -11,14 +12,14 @@ private[pixiv] abstract class AbstractResourceDelegator {
     val statusCode = httpResponse.responseStatusCode
     if (statusCode != 200) {
       throw new HttpResponseException(httpResponse,
-        "Http status code is not 200 [" + statusCode + "]")
+        Some("Http status code is not 200 [" + statusCode + "]"))
     }
   }
 
   @throws(classOf[PixivException])
   protected def checkAuthentication(document: Document) {
     if (document.select(".newindex-signin").first != null) {
-      throw new PixivException("No authentication")
+      throw new PixivException(IOError, Some("No authentication"))
     }
   }
 
@@ -26,7 +27,7 @@ private[pixiv] abstract class AbstractResourceDelegator {
   protected def createAuthHttpRequestParameters(implicit config: Config): Map[String, String] = {
     config.authToken match {
       case Some(t) => Map("PHPSESSID" -> t)
-      case None => throw new PixivException("User access token is not found")
+      case None => throw new PixivException(IOError, Some("User access token is not found"))
     }
   }
 }

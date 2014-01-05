@@ -57,16 +57,16 @@ private[pixiv] trait IllustComponentImpl extends IllustComponent {
             (w.toInt, h.toInt)
           } catch {
             case e: NumberFormatException =>
-              return Left(new PixivException("width or height is not number"))
+              return Left(new PixivException(PixivException.IOError, Some("width or height is not number")))
           }
         case _ =>
-          return Left(new PixivException("width and height not found"))
+          return Left(new PixivException(PixivException.IOError, Some("width and height not found")))
       }
       Right(size)
     }
   }
 }
 
-private[this] trait IllustImpl extends Illust{
-  
+private[this] trait IllustImpl extends Illust {
+
 }

@@ -9,6 +9,8 @@ import com.google.gson.Gson
 import com.google.gson.reflect.TypeToken
 import java.io.ObjectOutputStream
 import java.io.ObjectInputStream
+import java.io.IOException
+import org.yotchang4s.pixiv.PixivException._
 
 private[pixiv] trait RankingComponentImpl extends RankingComponent { this: IllustComponent =>
   private val rankingUrlBase = "http://www.pixiv.net/ranking.php?format=json&"
@@ -58,9 +60,11 @@ private[pixiv] trait RankingComponentImpl extends RankingComponent { this: Illus
       val http = new Http
       http.userAgent("Yapix")
 
+      var response: HttpResponse = null
       try {
         val cookie = config.authToken.map(HttpCookie("PHPSESSID", _))
-        val response = http.get(baseUrl + "&p=" + page, None, None, cookie.map(List(_)))
+
+        response = http.get(baseUrl + "&p=" + page, None, None, cookie.map(List(_)))
         val body = response.asString("UTF-8")
 
         val rankings = toRankingIllust(body)
@@ -69,12 +73,14 @@ private[pixiv] trait RankingComponentImpl extends RankingComponent { this: Illus
 
       } catch {
         case e: PixivException => Left(e)
-        case e: Exception => Left(new PixivException(e))
+        case e: IOException => Left(new HttpResponseException(response, Some(e)))
       }
     }
 
-    def manga(rankingType: MangaRankingType, page: Int)(implicit config: Config): Either[PixivException, List[RankingIllust]] = Left(new PixivException("No implements"))
-    def novel(rankingType: NovelRankingType, page: Int)(implicit config: Config): Either[PixivException, List[RankingIllust]] = Left(new PixivException("No implements"))
+    def manga(rankingType: MangaRankingType, page: Int)(implicit config: Config): Either[PixivException, List[RankingIllust]] =
+      Left(new PixivException(NoImplements))
+    def novel(rankingType: NovelRankingType, page: Int)(implicit config: Config): Either[PixivException, List[RankingIllust]] =
+      Left(new PixivException(NoImplements))
   }
 
   private def toRankingIllust(body: String) = {
@@ -82,9 +88,9 @@ private[pixiv] trait RankingComponentImpl extends RankingComponent { this: Illus
     if (content.contents == null) {
       val error = (new Gson).fromJson(body, classOf[Error])
       if (error.error == null) {
-        throw new PixivException("Unknown Error")
+        throw new PixivException(IOError, Some("Unknown IO Error"))
       }
-      throw new PixivException(error.error)
+      throw new PixivException(IOError, Some(error.error))
     }
 
     import scala.collection.convert.WrapAsScala._

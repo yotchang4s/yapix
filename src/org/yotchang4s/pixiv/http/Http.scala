@@ -4,6 +4,8 @@ import java.io._
 import java.net._
 import org.yotchang4s.util.Loan
 import org.yotchang4s.util.Loan._
+import org.yotchang4s.pixiv.PixivException
+import org.yotchang4s.pixiv.PixivException._
 
 object RequestMethod {
   case object Get extends RequestMethod("GET")
@@ -78,14 +80,18 @@ class Http {
     import scala.collection.convert.WrapAsScala._
     val requestProperties = con.getRequestProperties.toMap.map { case (k, v) => (k, v.toList) }
 
-    con.connect
+    try {
+      con.connect
 
-    if (method == RequestMethod.Post && !paramsData.isEmpty()) {
-      for {
-        writer <- Loan(new BufferedWriter(new OutputStreamWriter(con.getOutputStream())))
-      } {
-        writer.write(paramsData)
+      if (method == RequestMethod.Post && !paramsData.isEmpty()) {
+        for {
+          writer <- Loan(new BufferedWriter(new OutputStreamWriter(con.getOutputStream())))
+        } {
+          writer.write(paramsData)
+        }
       }
+    } catch {
+      case e: IOException => throw new PixivException(PixivException.IOError, Some(e))
     }
 
     new HttpResponse(con, con.getResponseCode, requestProperties)

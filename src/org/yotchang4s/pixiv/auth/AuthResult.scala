@@ -1,5 +1,7 @@
 package org.yotchang4s.pixiv.auth;
 
+import org.yotchang4s.pixiv.PixivException
+
 sealed case class AuthUser(pixivId: String, pixivPassword: String)
 
 sealed trait AuthResult {
@@ -11,6 +13,6 @@ case class AuthSuccess(pixivId: String, userId: String, authToken: String) exten
   def isSuccess = true
 }
 
-case class AuthFailure(reasonMessage: String, cause: Option[Exception] = None) extends AuthResult {
+case class AuthFailure(reasonMessage: String, cause: Option[PixivException] = None) extends AuthResult {
   def isSuccess = false
 }
