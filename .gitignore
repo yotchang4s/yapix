@@ -6,6 +6,8 @@
 bin/
 gen/
 
+libs/scala_library.min.jar
+
 local.properties
 project.properties
 
