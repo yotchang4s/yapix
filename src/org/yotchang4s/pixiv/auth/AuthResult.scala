@@ -14,5 +14,9 @@ case class AuthSuccess(pixivId: String, userId: String, authToken: String) exten
 }
 
 case class AuthFailure(reasonMessage: String, cause: Option[PixivException] = None) extends AuthResult {
+  def this(cause: Option[PixivException]) {
+    this(null, cause)
+  }
+
   def isSuccess = false
 }
