@@ -106,7 +106,7 @@ class LoginActivity extends FragmentActivity { loginActivity =>
           moveYapixActivity
         }
         case AuthFailure(msg, e) =>
-          Log.e(TAG, msg, e getOrElse null)
+          Log.w(TAG, msg, e getOrElse null)
           Toast.makeText(loginActivity, "ログインに失敗しました\n" + msg, Toast.LENGTH_LONG).show;
       }
 
