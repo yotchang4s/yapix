@@ -25,18 +25,16 @@ class RankingFragment extends QuickReturnGridViewFragment {
   private[this]type RankingGridAdapter = ListGridViewImageAdapter[RankingIllust]
 
   private[this] var quickReturnView: Spinner = null
-  private[this] var rankingGridAdapter: Option[RankingGridAdapter] = None
-  private[this] var rankingTypeAdapter: Option[RankingTypeAdapter] = None
+  private[this] var rankingGridAdapter: RankingGridAdapter = null
+  private[this] var rankingTypeAdapter: RankingTypeAdapter = null
   private[this] var rankingCategory: RankingCategory = null
 
   private[this] var currentFuture: Option[(Future[Either[PixivException, List[RankingIllust]]], () => Boolean)] = None
 
   private[this] var nowRankingType: RankingType[_] = Overall.Daily
-  private[this] var nowRankingTypePosition: Int = 0
 
   private[this] var scrollLast = false
   private[this] var rankings: List[RankingIllust] = Nil
-  private[this] var rankingsFirstVisiblePosition = 0
   private[this] var rankingsPage = 0
 
   setRetainInstance(true)
@@ -56,40 +54,30 @@ class RankingFragment extends QuickReturnGridViewFragment {
     val view = super.onCreateView(inflater, container, savedInstanceState);
 
     gridView.onScrolls += { (view, firstVisibleItem, visibleItemCount, totalItemCount) =>
-      //computePositionAndOffset
       scrollLast = totalItemCount != 0 && totalItemCount == firstVisibleItem + visibleItemCount
     }
     gridView.onScrollChanges += { (view, scrollState) =>
-      computePosition
       if (RankingFragment.this.scrollLast && scrollState == OnScrollListener.SCROLL_STATE_IDLE) {
-        for (a <- rankingGridAdapter) {
-          paging(nowRankingType)
-          scrollLast = false
-        }
+        paging(nowRankingType)
+        scrollLast = false
       }
-    }
-    def computePosition {
-      rankingsFirstVisiblePosition = gridView.getFirstVisiblePosition
     }
 
     gridView.onItemClicks += { (parent, view, position, id) =>
-      for (rga <- rankingGridAdapter) {
-        val tran = getFragmentManager.beginTransaction
+      val tran = getFragmentManager.beginTransaction
 
-        val fragment = new IllustViewPagerFragment
+      val fragment = new IllustViewPagerFragment
 
-        val bundle = new Bundle
-        bundle.putSerializable(ArgumentKeys.IllustList, rga.getList.toArray)
-        bundle.putInt(ArgumentKeys.IllustListPosition, position)
+      val bundle = new Bundle
+      bundle.putSerializable(ArgumentKeys.IllustList, rankings.toArray)
+      bundle.putInt(ArgumentKeys.IllustListPosition, position)
 
-        fragment.setArguments(bundle)
+      fragment.setArguments(bundle)
 
-        tran.remove(this)
-        tran.replace(R.id.content, fragment, "YHAAAAAA")
-        tran.addToBackStack(null)
-        tran.show(fragment)
-        tran.commit
-      }
+      tran.add(R.id.content, fragment, "YHAAAAAA")
+      tran.hide(this)
+      tran.addToBackStack(null)
+      tran.commit
     }
     view
   }
@@ -98,73 +86,37 @@ class RankingFragment extends QuickReturnGridViewFragment {
     quickReturnView = rootView.findViewById(R.id.rankingQuickReturnSticky).asInstanceOf[Spinner]
 
     quickReturnView.onItemSelecteds += { (parent, view, position, id) =>
-      rankingTypeAdapter match {
-        case Some(a) =>
-          val newRankingLabels =
-            for ((label, i) <- a.getRankingLabels.zipWithIndex) yield {
-              i match {
-                case p if (p == position) =>
-                  RankingLabel(label.text, label.existR18, label.r18)
-                case _ => label
-              }
-            }
-          a.setRankingLabels(a.getRankingLabels)
-
-          val oldRankingType = nowRankingType
-          nowRankingType = getCurrentRankingType(rankingCategory, position, a.getRankingLabels(position).r18)
-          nowRankingTypePosition = position
-          if (nowRankingType != oldRankingType) {
-            rankings = Nil
+      val newRankingLabels =
+        for ((label, i) <- rankingTypeAdapter.getRankingLabels.zipWithIndex) yield {
+          i match {
+            case p if (p == position) =>
+              RankingLabel(label.text, label.existR18, label.r18)
+            case _ => label
           }
-          paging(nowRankingType)
-        case None =>
+        }
+      rankingTypeAdapter.setRankingLabels(rankingTypeAdapter.getRankingLabels)
+
+      val oldRankingType = nowRankingType
+      nowRankingType = getCurrentRankingType(rankingCategory, position, rankingTypeAdapter.getRankingLabels(position).r18)
+      if (nowRankingType != oldRankingType) {
+        rankings = Nil
       }
+      paging(nowRankingType)
     }
 
     quickReturnView
   }
 
-  protected override def onDestroyView {
-    super.onDestroyView
-
-    gridView.setAdapter(null)
-    gridView.onScrolls.clear
-    gridView.onScrollChanges.clear
-  }
-
   protected override def onActivityCreated(savedInstanceState: Bundle) {
     super.onActivityCreated(savedInstanceState)
 
-    Log.e(TAG, rankingsPage + ": " + rankings.size)
+    rankingGridAdapter = new RankingGridAdapter(getActivity.getApplicationContext, 100, 5)
+    rankingGridAdapter.setList(rankings)
+    gridView.setAdapter(rankingGridAdapter)
 
-    rankingGridAdapter match {
-      case Some(a) =>
-        a.setList(rankings)
-        gridView.setAdapter(a)
-        gridView.invalidateComputeScrollY
-        a.notifyDataSetChanged
-        gridView.setSelection(rankingsFirstVisiblePosition)
-
-      case None =>
-        val a = new RankingGridAdapter(getActivity.getApplicationContext, 100, 5)
-        a.setList(rankings)
-        gridView.setAdapter(a)
-
-        rankingGridAdapter = Some(a)
-    }
-
-    rankingTypeAdapter match {
-      case Some(a) =>
-        quickReturnView.setAdapter(a)
-        a.notifyDataSetChanged
-        quickReturnView.setSelection(nowRankingTypePosition)
-
-      case None =>
-        val a = new RankingTypeAdapter(this.quickReturnView)
-        a.setRankingLabels(createRankingLabels(rankingCategory))
-        quickReturnView.setAdapter(a)
-        rankingTypeAdapter = Some(a)
-    }
+    rankingTypeAdapter = new RankingTypeAdapter(this.quickReturnView)
+    rankingTypeAdapter.setRankingLabels(createRankingLabels(rankingCategory))
+    quickReturnView.setAdapter(rankingTypeAdapter)
   }
 
   private def createRankingLabels(rankingCategory: RankingCategory): List[RankingLabel] = {
@@ -290,16 +242,11 @@ class RankingFragment extends QuickReturnGridViewFragment {
     import scala.concurrent._
     import ExecutionContext.Implicits.global
 
-    val rga = rankingGridAdapter match {
-      case Some(a) => a
-      case None => return
-    }
-
     if (rankings == Nil) {
       rankingsPage = 1
-      rga.setList(rankings)
+      rankingGridAdapter.setList(rankings)
       gridView.invalidateComputeScrollY
-      rga.notifyDataSetChanged
+      rankingGridAdapter.notifyDataSetChanged
     }
 
     currentFuture match {
@@ -317,9 +264,9 @@ class RankingFragment extends QuickReturnGridViewFragment {
     future.onSuccess {
       case Right(x) =>
         rankings = rankings ::: x
-        rga.setList(rankings)
+        rankingGridAdapter.setList(rankings)
         gridView.invalidateComputeScrollY
-        rga.notifyDataSetChanged
+        rankingGridAdapter.notifyDataSetChanged
 
         rankingsPage = rankingsPage + 1
 
@@ -329,7 +276,7 @@ class RankingFragment extends QuickReturnGridViewFragment {
 
           ToastMaster.makeText(getActivity, "接続に失敗しました" + message, Toast.LENGTH_LONG).show
         }
-        Log.e(TAG, "接続失敗", e);
+        Log.w(TAG, "接続失敗", e);
 
     }(new UIExecutionContext())
 
