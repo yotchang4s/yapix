@@ -52,32 +52,29 @@ class YapixActivity extends FragmentActivity {
       changeRankingFragment(novelFragment, Novel, _)
     }
 
-    def changeRankingFragment(rankingFragment: RankingFragment, rankingCategory: RankingCategory, view: View) {
-      menuDrawerActiveViewChange(view)
-      val bundle = new Bundle
-      bundle.putSerializable(ArgumentKeys.RankingCategory, rankingCategory)
-      changeFragment(rankingFragment, Some(bundle))
-    }
-
     menuDrawerActiveViewChange(findViewById(R.id.menuDrawerTimeline))
-
-    def menuDrawerActiveViewChange(v: View) {
-      menuDrawer.setActiveView(v)
-      menuDrawer.closeMenu
-      activeViewId = v.getId
-    }
-
-    val activeView = findViewById(activeViewId)
-    if (activeView != null) {
-      menuDrawer.setActiveView(activeView)
-    }
   }
 
-  private def changeFragment(fragment: Fragment, bundle: Option[Bundle] = None) {
+  def changeRankingFragment(rankingFragment: RankingFragment, rankingCategory: RankingCategory, view: View) {
+    menuDrawerActiveViewChange(view)
+
+    rankingFragment.getArguments match {
+      case null =>
+        val bundle = new Bundle
+        bundle.putSerializable(ArgumentKeys.RankingCategory, rankingCategory)
+        rankingFragment.setArguments(bundle)
+      case _ =>
+    }
+
     val tran = getSupportFragmentManager.beginTransaction
-    tran.replace(R.id.content, fragment)
-    bundle.foreach(fragment.setArguments)
+    tran.replace(R.id.content, rankingFragment)
     tran.commit
+  }
+
+  private def menuDrawerActiveViewChange(v: View) {
+    menuDrawer.setActiveView(v)
+    menuDrawer.closeMenu
+    activeViewId = v.getId
   }
 
   override def onOptionsItemSelected(item: MenuItem): Boolean = {
