@@ -37,6 +37,7 @@ class YapixActivity extends FragmentActivity {
 
     findViewById(R.id.menuDrawerTimeline).onClick { menuDrawerActiveViewChange(_) }
     findViewById(R.id.menuDrawerSearch).onClick { menuDrawerActiveViewChange(_) }
+    findViewById(R.id.menuDrawerBookmark).onClick { menuDrawerActiveViewChange(_) }
     findViewById(R.id.menuDrawerProfile).onClick { menuDrawerActiveViewChange(_) }
 
     findViewById(R.id.menuDrawerRankingOverall).onClick {
@@ -55,7 +56,7 @@ class YapixActivity extends FragmentActivity {
     menuDrawerActiveViewChange(findViewById(R.id.menuDrawerTimeline))
   }
 
-  def changeRankingFragment(rankingFragment: RankingFragment, rankingCategory: RankingCategory, view: View) {
+  private def changeRankingFragment(rankingFragment: RankingFragment, rankingCategory: RankingCategory, view: View) {
     menuDrawerActiveViewChange(view)
 
     rankingFragment.getArguments match {

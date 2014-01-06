@@ -25,6 +25,14 @@
             android:text="@string/search" />
 
         <TextView
+            android:id="@+id/menuDrawerBookmark"
+            style="@style/MenuDrawer.Widget.Title"
+            android:layout_width="match_parent"
+            android:layout_height="wrap_content"
+            android:drawableLeft="@android:drawable/star_big_on"
+            android:text="@string/bookmark" />
+
+        <TextView
             android:id="@+id/menuDrawerProfile"
             style="@style/MenuDrawer.Widget.Title"
             android:layout_width="match_parent"
