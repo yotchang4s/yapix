@@ -18,6 +18,7 @@ class YapixActivity extends FragmentActivity {
   var menuDrawer: MenuDrawer = null
   var activeViewId = 0;
 
+  val bookmarkFragment = new BookmarkFragment
   val overallFragment = new RankingFragment
   val illustFragment = new RankingFragment
   val mangaFragment = new RankingFragment
@@ -37,7 +38,9 @@ class YapixActivity extends FragmentActivity {
 
     findViewById(R.id.menuDrawerTimeline).onClick { menuDrawerActiveViewChange(_) }
     findViewById(R.id.menuDrawerSearch).onClick { menuDrawerActiveViewChange(_) }
-    findViewById(R.id.menuDrawerBookmark).onClick { menuDrawerActiveViewChange(_) }
+    findViewById(R.id.menuDrawerBookmark).onClick {
+      changeFragment(bookmarkFragment, _)
+    }
     findViewById(R.id.menuDrawerProfile).onClick { menuDrawerActiveViewChange(_) }
 
     findViewById(R.id.menuDrawerRankingOverall).onClick {
@@ -57,8 +60,6 @@ class YapixActivity extends FragmentActivity {
   }
 
   private def changeRankingFragment(rankingFragment: RankingFragment, rankingCategory: RankingCategory, view: View) {
-    menuDrawerActiveViewChange(view)
-
     rankingFragment.getArguments match {
       case null =>
         val bundle = new Bundle
@@ -67,8 +68,14 @@ class YapixActivity extends FragmentActivity {
       case _ =>
     }
 
+    changeFragment(rankingFragment, view)
+  }
+
+  private def changeFragment(fragment: Fragment, view: View) {
+    menuDrawerActiveViewChange(view)
+
     val tran = getSupportFragmentManager.beginTransaction
-    tran.replace(R.id.content, rankingFragment)
+    tran.replace(R.id.content, fragment)
     tran.commit
   }
 

@@ -11,13 +11,15 @@ import java.io.ObjectOutputStream
 import java.io.ObjectInputStream
 import java.io.IOException
 import org.yotchang4s.pixiv.PixivException._
+import org.yotchang4s.scala.Loan
+import org.yotchang4s.scala.Loan._
 
 private[pixiv] trait RankingComponentImpl extends RankingComponent { this: IllustComponent =>
   private val rankingUrlBase = "http://www.pixiv.net/ranking.php?format=json&"
   private val novelRankingUrlBase = "http://www.pixiv.net/ranking.php?"
 
   class RankingRepositoryImpl extends RankingRepository {
-    def overall(rankingType: OverallRankingType, page: Int)(implicit config: Config): Either[PixivException, List[RankingIllust]] = {
+    def overall(rankingType: OverallRankingType, page: Int)(implicit config: Config): Either[PixivException, List[Illust]] = {
       import Overall._
 
       val ovarallRankingUrl = rankingType match {
@@ -37,10 +39,10 @@ private[pixiv] trait RankingComponentImpl extends RankingComponent { this: Illus
       getIllust(ovarallRankingUrl, page)(config)
     }
 
-    def illust(rankingType: IllustRankingType, page: Int)(implicit config: Config): Either[PixivException, List[RankingIllust]] = {
+    def illust(rankingType: IllustRankingType, page: Int)(implicit config: Config): Either[PixivException, List[Illust]] = {
       import Illust._
 
-      val ovarallRankingUrl = rankingType match {
+      val illustRankingUrl = rankingType match {
         case Daily => rankingUrlBase + "mode=daily"
         case Weekly => rankingUrlBase + "mode=weekly"
         case Monthly => rankingUrlBase + "mode=monthly"
@@ -51,35 +53,42 @@ private[pixiv] trait RankingComponentImpl extends RankingComponent { this: Illus
         case FemaleR18 => rankingUrlBase + "mode=female_r18"
       }
 
-      getIllust(ovarallRankingUrl + "&content=illust", page)(config)
+      getIllust(illustRankingUrl + "&content=illust", page)(config)
     }
 
-    private def getIllust(baseUrl: String, page: Int)(implicit config: Config): Either[PixivException, List[RankingIllust]] = {
+    private def getIllust(baseUrl: String, page: Int)(implicit config: Config): Either[PixivException, List[Illust]] = {
       import Overall._
 
       val http = new Http
       http.userAgent("Yapix")
 
-      var response: HttpResponse = null
-      try {
-        val cookie = config.authToken.map(HttpCookie("PHPSESSID", _))
+      val cookie = config.authToken.map(HttpCookie("PHPSESSID", _))
 
-        response = http.get(baseUrl + "&p=" + page, None, None, cookie.map(List(_)))
-        val body = response.asString("UTF-8")
+      val response =
+        try {
+          http.get(baseUrl + "&p=" + page, None, None, cookie.map(List(_)))
+        } catch {
+          case e: IOException => return Left(new PixivException(IOError, Some(e)))
+        }
+      for (r <- Loan(response)) {
+        try {
+          val body = response.asString("UTF-8")
 
-        val rankings = toRankingIllust(body)
+          val rankings = toRankingIllust(body)
 
-        return Right(rankings)
+          Right(rankings)
 
-      } catch {
-        case e: PixivException => Left(e)
-        case e: IOException => Left(new HttpResponseException(response, Some(e)))
+        } catch {
+          case e: PixivException => Left(e)
+          case e: IOException => Left(new HttpResponseException(response, Some(e)))
+        }
       }
     }
 
-    def manga(rankingType: MangaRankingType, page: Int)(implicit config: Config): Either[PixivException, List[RankingIllust]] =
+    def manga(rankingType: MangaRankingType, page: Int)(implicit config: Config): Either[PixivException, List[Illust]] =
       Left(new PixivException(NoImplements))
-    def novel(rankingType: NovelRankingType, page: Int)(implicit config: Config): Either[PixivException, List[RankingIllust]] =
+
+    def novel(rankingType: NovelRankingType, page: Int)(implicit config: Config): Either[PixivException, List[Illust]] =
       Left(new PixivException(NoImplements))
   }
 
@@ -95,17 +104,11 @@ private[pixiv] trait RankingComponentImpl extends RankingComponent { this: Illus
 
     import scala.collection.convert.WrapAsScala._
     content.contents.map { rankingJson =>
-      new RankingIllustImpl(
+      new IllustImpl(
         this,
         IllustId(rankingJson.illust_id),
         rankingJson.title,
-        rankingJson.width,
-        rankingJson.height,
-        rankingJson.tags.map(t => new Tag(TagId(t))).toList,
-        rankingJson.url,
-        rankingJson.yes_rank,
-        rankingJson.total_score,
-        rankingJson.view_count)
+        rankingJson.url)
     }.toList
   }
 }
@@ -126,23 +129,3 @@ private[this] case class RankingJson(
   yes_rank: Int,
   total_score: Int,
   view_count: Int)
-
-private class RankingIllustImpl(
-  @transient val illust: IllustComponent,
-  val identity: IllustId,
-  val title: String,
-  val width: Int,
-  val height: Int,
-  val tags: List[Tag],
-  val url: String,
-  val yesterdayRank: Int,
-  val totalScore: Int,
-  val viewCount: Int) extends RankingIllust {
-
-  @transient
-  lazy val illustRepository: illust.IllustRepository = illust.illust
-
-  def detail(implicit config: Config) = illustRepository.findIllustDetailBy(identity)(config)
-
-  override def toString = identity.value
-}

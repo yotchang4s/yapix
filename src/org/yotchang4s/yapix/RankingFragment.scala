@@ -22,19 +22,17 @@ class RankingFragment extends QuickReturnGridViewFragment {
 
   private[this] val TAG = getClass.getSimpleName
 
-  private[this]type RankingGridAdapter = ListGridViewImageAdapter[RankingIllust]
-
   private[this] var quickReturnView: Spinner = null
   private[this] var rankingGridAdapter: RankingGridAdapter = null
   private[this] var rankingTypeAdapter: RankingTypeAdapter = null
   private[this] var rankingCategory: RankingCategory = null
 
-  private[this] var currentFuture: Option[(Future[Either[PixivException, List[RankingIllust]]], () => Boolean)] = None
+  private[this] var currentFuture: Option[(Future[Either[PixivException, List[Illust]]], () => Boolean)] = None
 
   private[this] var nowRankingType: RankingType[_] = Overall.Daily
 
   private[this] var scrollLast = false
-  private[this] var rankings: List[RankingIllust] = Nil
+  private[this] var rankings: List[Illust] = Nil
   private[this] var rankingsPage = 0
 
   setRetainInstance(true)
@@ -222,20 +220,13 @@ class RankingFragment extends QuickReturnGridViewFragment {
     }
   }
 
-  private def get(rankingType: RankingType[_], page: Int): Either[PixivException, List[RankingIllust]] = {
+  private def get(rankingType: RankingType[_], page: Int): Either[PixivException, List[Illust]] = {
     rankingType match {
       case t: OverallRankingType => Pixiv.ranking.overall(t, page)
       case t: IllustRankingType => Pixiv.ranking.illust(t, page)
       case t: MangaRankingType => Pixiv.ranking.manga(t, page)
       case t: NovelRankingType => Pixiv.ranking.novel(t, page)
     }
-  }
-
-  private def cancellableFuture[T](fun: Future[T] => T)(implicit ex: ExecutionContext): (Future[T], () => Boolean) = {
-    val p = Promise[T]()
-    val f = p.future
-    p tryCompleteWith Future(fun(f))
-    (f, () => p.tryFailure(new CancellationException))
   }
 
   private def paging(rankingType: RankingType[_]) {
@@ -250,12 +241,12 @@ class RankingFragment extends QuickReturnGridViewFragment {
     }
 
     currentFuture match {
-      case Some(f) =>
-        f._2()
+      case Some(f) => f._2()
       case None =>
     }
 
-    val (future, cancel) = cancellableFuture[Either[PixivException, List[RankingIllust]]](future => {
+    import org.yotchang4s.scala.FutureUtil._
+    val (future, cancel) = cancellableFuture[Either[PixivException, List[Illust]]](future => {
       get(rankingType, rankingsPage)
     })
 
@@ -281,8 +272,7 @@ class RankingFragment extends QuickReturnGridViewFragment {
     }(new UIExecutionContext())
 
     future.onFailure {
-      case e: CancellationException =>
-        currentFuture = None
+      case e: CancellationException => currentFuture = None
     }(new UIExecutionContext())
   }
 }

@@ -6,22 +6,16 @@ import android.content.Context
 object ToastMaster {
   private var sToast: Toast = null
 
-  def makeText(context: Context, resId: Int, duration: Int): Toast = {
-    val toast = new ToastMaster(context)
+  def makeText(context: Context, resId: Int, duration: Int): ToastMaster = {
+    val toast = Toast.makeText(context, resId, duration)
 
-    toast.setText(resId)
-    toast.setDuration(duration)
-
-    toast
+    new ToastMaster(toast)
   }
 
-  def makeText(context: Context, text: CharSequence, duration: Int): Toast = {
-    val toast = new ToastMaster(context)
+  def makeText(context: Context, text: CharSequence, duration: Int): ToastMaster = {
+    val toast = Toast.makeText(context, text, duration)
 
-    toast.setText(text)
-    toast.setDuration(duration)
-
-    toast
+    new ToastMaster(toast)
   }
 
   private def setToast(toast: Toast) {
@@ -39,10 +33,9 @@ object ToastMaster {
   }
 }
 
-class ToastMaster(context: Context) extends Toast(context) {
-
-  override def show {
-    ToastMaster.setToast(this)
-    super.show
+class ToastMaster private (toast: Toast) {
+  def show {
+    ToastMaster.setToast(toast)
+    toast.show
   }
 }

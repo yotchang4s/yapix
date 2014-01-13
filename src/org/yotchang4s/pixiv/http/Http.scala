@@ -2,8 +2,8 @@ package org.yotchang4s.pixiv.http
 
 import java.io._
 import java.net._
-import org.yotchang4s.util.Loan
-import org.yotchang4s.util.Loan._
+import org.yotchang4s.scala.Loan
+import org.yotchang4s.scala.Loan._
 import org.yotchang4s.pixiv.PixivException
 import org.yotchang4s.pixiv.PixivException._
 
@@ -18,10 +18,14 @@ sealed abstract class RequestMethod(_name: String) {
 
 class Http {
 
-  private var _userAgent: Option[String] = None
+  private[this] var _userAgent: Option[String] = None
+  private[this] var _referrer: Option[String] = None
 
   def userAgent(userAgent: String) { _userAgent = Option(userAgent) }
   def userAgent: Option[String] = _userAgent
+
+  def referrer(referrer: String) { _referrer = Option(referrer) }
+  def referrer: Option[String] = _referrer
 
   @throws(classOf[IOException])
   def get(url: String, params: Option[List[HttpRequestParameter]] = None,
@@ -62,19 +66,18 @@ class Http {
     }
 
     userAgent.foreach(con.setRequestProperty("User-Agent", _))
-
-    headers.foreach {
-      _.foreach {
-        case header => con.setRequestProperty(header.key, header.value)
-      }
-    }
-
+    referrer.foreach(con.setRequestProperty("Referrer", _))
+    
+    
     cookies.foreach { cs =>
       val cookieString = cs.map { cookie =>
         URLEncoder.encode(cookie.key) + "=" + URLEncoder.encode(cookie.value)
       }.mkString("; ")
 
       con.setRequestProperty("Cookie", cookieString)
+    }
+    headers.getOrElse(Nil).foreach { header =>
+      con.setRequestProperty(header.key, header.value)
     }
 
     import scala.collection.convert.WrapAsScala._

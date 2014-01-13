@@ -8,10 +8,10 @@ trait RankingComponent {
   val ranking: RankingRepository
 
   trait RankingRepository {
-    def overall(rankingType: OverallRankingType, page: Int)(implicit config: Config): Either[PixivException, List[RankingIllust]]
-    def illust(rankingType: IllustRankingType, page: Int)(implicit config: Config): Either[PixivException, List[RankingIllust]]
-    def manga(rankingType: MangaRankingType, page: Int)(implicit config: Config): Either[PixivException, List[RankingIllust]]
-    def novel(rankingType: NovelRankingType, page: Int)(implicit config: Config): Either[PixivException, List[RankingIllust]]
+    def overall(rankingType: OverallRankingType, page: Int)(implicit config: Config): Either[PixivException, List[Illust]]
+    def illust(rankingType: IllustRankingType, page: Int)(implicit config: Config): Either[PixivException, List[Illust]]
+    def manga(rankingType: MangaRankingType, page: Int)(implicit config: Config): Either[PixivException, List[Illust]]
+    def novel(rankingType: NovelRankingType, page: Int)(implicit config: Config): Either[PixivException, List[Illust]]
   }
 }
 

@@ -7,10 +7,10 @@
 
     <TextView
         android:id="@+id/rankingTypeSpinnterDropDownText"
-        style="@style/Ranking.Dropdown.Text" />
+        style="@style/QuickReturn.Sticky.Text" />
 
     <Switch
         android:id="@+id/rankingTypeSpinnterDropDownR18Switch"
-        style="@style/Ranking.Dropdown.R18Switch" />
+        style="@style/QuickReturn.Sticky.Switch" />
 
 </LinearLayout>

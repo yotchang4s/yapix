@@ -1,4 +1,4 @@
-package org.yotchang4s.util
+package org.yotchang4s.scala
 
 trait Closer[-A] {
   def close(value: A)

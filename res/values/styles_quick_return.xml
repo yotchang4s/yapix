@@ -12,21 +12,16 @@
         <item name="android:gravity">center_vertical</item>
         <item name="android:textAppearance">?android:textAppearanceLarge</item>
         <item name="android:textAllCaps">true</item>
-        <!-- v16 -->
-        <item name="android:fontFamily">sans-serif-light</item>
         <item name="android:focusable">false</item>
     </style>
 
-    <style name="Ranking.Dropdown" parent="QuickReturn.Sticky">
+    <style name="QuickReturn.Sticky.Text">
         <item name="android:paddingLeft">30sp</item>
-    </style>
-
-    <style name="Ranking.Dropdown.Text">
         <item name="android:layout_width">0dp</item>
         <item name="android:layout_weight">1</item>
     </style>
 
-    <style name="Ranking.Dropdown.R18Switch">
+    <style name="QuickReturn.Sticky.Switch">
         <item name="android:layout_width">wrap_content</item>
         <item name="android:layout_height">match_parent</item>
         <item name="android:checked">false</item>

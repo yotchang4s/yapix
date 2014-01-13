@@ -9,9 +9,13 @@ import scala.util.Success
 import scala.util.Failure
 import scala.util.Either
 import org.jsoup.nodes.Document
+import org.yotchang4s.pixiv.PixivException._
+import org.yotchang4s.pixiv.user.User
+import java.io.BufferedReader
+import java.io.IOException
 
 private[pixiv] trait IllustComponentImpl extends IllustComponent {
-  private val illustUrlBase = "http://www.pixiv.net/member_illust.php?mode=medium&illust_id="
+  private val illustUrlBase = "http://spapi.pixiv.net/iphone/illust.php?"
 
   class IllustRepositoryImpl extends IllustRepository {
     def findIllustBy(id: IllustId)(implicit config: Config): Either[PixivException, Illust] = {
@@ -19,54 +23,55 @@ private[pixiv] trait IllustComponentImpl extends IllustComponent {
     }
 
     def findIllustDetailBy(id: IllustId)(implicit config: Config): Either[PixivException, IllustDetail] = {
-      val http = new Http
-      http.userAgent("Yapix")
-
-      val response = http.get(illustUrlBase + id.value)
-      val responseString = response.asString
-
-      val document = Jsoup.parse(responseString)
-      val widthAndHeight = getWidthAndHeight(document) match {
-        case Left(x) => return Left(x)
-        case Right(x) => x
-      }
-
-      Right(new IllustDetail {
-        private val _detail: IllustDetail = this
-
-        val illust = new IllustImpl {
-          val identity = id
-          val title = ""
-          val width = widthAndHeight._1
-          val height = widthAndHeight._1
-          val tags = List[Tag]()
-          val url = ""
-
-          def detail(implicit config: Config): Either[PixivException, IllustDetail] = Right(_detail)
+      val illustDetailUrl = {
+        val iu = illustUrlBase + "illust_id=" + id.value
+        config.authToken match {
+          case Some(a) => iu + "&PHPSESSID=" + a
+          case None => iu
         }
-
-        def detail(implicit config: Config) = Right(this)
-      })
-    }
-
-    private def getWidthAndHeight(document: Document): Either[PixivException, (Int, Int)] = {
-      val widthAndHeightRegex = """^(.+)×(.+)$""".r
-      val size: (Int, Int) = document.select("ul.meta > li:nth-of-type(2)") match {
-        case widthAndHeightRegex(w, h) =>
-          try {
-            (w.toInt, h.toInt)
-          } catch {
-            case e: NumberFormatException =>
-              return Left(new PixivException(PixivException.IOError, Some("width or height is not number")))
-          }
-        case _ =>
-          return Left(new PixivException(PixivException.IOError, Some("width and height not found")))
       }
-      Right(size)
+
+      try {
+        val http = new Http
+        http.userAgent("Yapix")
+
+        val response = http.get(illustDetailUrl)
+        val responseString = response.asString
+
+        val illustDetail = IllustDetailCsvParser.parse(responseString)
+
+        Right(illustDetail)
+      } catch {
+        case e: IOException => throw new PixivException(IOError, Some(e))
+        case e: Exception => throw new PixivException(UnknownError, Some(e))
+      }
     }
   }
 }
 
-private[this] trait IllustImpl extends Illust {
+private[pixiv] class IllustImpl(@transient val illust: IllustComponent,
+  val identity: IllustId,
+  val title: String,
+  val thumbnailImageUrl: String) extends Illust {
 
+  @transient
+  lazy val illustRepository: illust.IllustRepository = illust.illust
+
+  def detail(implicit config: Config) = illustRepository.findIllustDetailBy(identity)(config)
+
+  override def toString = identity.value
+}
+
+private[this] class IllustDetailImpl(
+  val illust: Illust,
+  val caption: String,
+  val middleImageUrl: String,
+  val imageUrl: String,
+  val tags: List[String],
+  val totalScore: Int,
+  val viewCount: Int,
+  val bookmarkCount: Int,
+  val user: User) extends IllustDetail {
+
+  def detail(implicit config: Config): Right[PixivException, IllustDetail] = Right(this)
 }

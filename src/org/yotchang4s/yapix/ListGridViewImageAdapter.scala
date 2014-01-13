@@ -10,11 +10,9 @@ import android.view._
 import org.yotchang4s.android._
 import org.yotchang4s.pixiv.http._
 import org.yotchang4s.pixiv.illust._
-import org.yotchang4s.pixiv.PixivException
-import org.yotchang4s.pixiv.ranking.RankingIllust
+import org.yotchang4s.pixiv._
 import org.yotchang4s.yapix.YapixConfig._
 import org.yotchang4s.pixiv.PixivException
-import java.io.File
 import com.android.volley.toolbox.NetworkImageView
 import com.android.volley.toolbox.ImageLoader
 
@@ -31,7 +29,7 @@ class ListGridViewImageAdapter[T <: Illust](
     val view = super.getView(position, convertView, parent).asInstanceOf[NetworkImageView]
 
     ImageCacheManager.imageLoader.foreach { l =>
-      view.setImageUrl(this.list(position).url, l)
+      view.setImageUrl(this.list(position).thumbnailImageUrl, l)
       view.setBackgroundColor(Color.rgb(0x00, 0x66, 0x99))
     }
 

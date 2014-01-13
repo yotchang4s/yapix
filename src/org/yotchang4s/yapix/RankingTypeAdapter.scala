@@ -64,7 +64,7 @@ class RankingTypeAdapter(spinner: Spinner) extends BaseAdapter {
             case _ => l
           }
         }
-        if(!checkChanged) {
+        if (!checkChanged) {
           return
         }
         rankingLabels = newRankingLabels

@@ -3,14 +3,15 @@ package org.yotchang4s.pixiv.http
 import java.io._
 import java.net._
 import scala.collection._
-import org.yotchang4s.util.Loan
-import org.yotchang4s.util.Loan._
+import org.yotchang4s.scala.Loan
+import org.yotchang4s.scala.Loan._
 import scala.io._
 import scala.collection.convert.WrapAsScala._
 import java.nio.charset.Charset
+import java.io.Closeable
 
 class HttpResponse(con: HttpURLConnection, statusCode: Int,
-  requestProperties: Map[String, List[String]]) {
+  requestProperties: Map[String, List[String]]) extends Closeable {
   var cacheCookies = immutable.Map[String, List[HttpCookie]]()
 
   var in: InputStream = new HttpURLConnectionCloseableInputStream(con,
@@ -72,6 +73,8 @@ class HttpResponse(con: HttpURLConnection, statusCode: Int,
       builder.toString;
     }
   }
+
+  def close = in.close
 
   private class HttpURLConnectionCloseableInputStream(conn: HttpURLConnection, in: InputStream)
     extends FilterInputStream(in) {

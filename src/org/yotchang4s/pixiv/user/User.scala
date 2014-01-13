@@ -9,4 +9,5 @@ class User(
   val identity: UserId,
   val name: String,
   val profileImageUrl: String) extends Entity[UserId] {
+
 }
