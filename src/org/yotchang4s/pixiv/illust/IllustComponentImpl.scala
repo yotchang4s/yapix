@@ -55,9 +55,22 @@ private[pixiv] class IllustImpl(@transient val illust: IllustComponent,
   val thumbnailImageUrl: String) extends Illust {
 
   @transient
-  lazy val illustRepository: illust.IllustRepository = illust.illust
+  private[this] lazy val illustRepository: illust.IllustRepository = illust.illust
 
-  def detail(implicit config: Config) = illustRepository.findIllustDetailBy(identity)(config)
+  private[this] var illustDetail: Option[IllustDetail] = None
+
+  def detail(implicit config: Config) = {
+    illustDetail match {
+      case Some(i) => Right(i)
+      case None =>
+        illustRepository.findIllustDetailBy(identity)(config) match {
+          case Right(i) =>
+            illustDetail = Some(i)
+            Right(i)
+          case Left(e) => Left(e)
+        }
+    }
+  }
 
   override def toString = identity.value
 }

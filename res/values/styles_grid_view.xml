@@ -1,0 +1,18 @@
+<resources>
+
+    <style name="Yapix" />
+
+    <style name="Yapix.GridView">
+        <item name="android:background">#09C</item>
+        <item name="android:clipToPadding">false</item>
+        <item name="android:columnWidth">120dp</item>
+        <item name="android:gravity">center</item>
+        <item name="android:horizontalSpacing">0dp</item>
+        <item name="android:numColumns">auto_fit</item>
+        <item name="android:paddingBottom">1dp</item>
+        <item name="android:paddingTop">51dp</item>
+        <item name="android:stretchMode">columnWidth</item>
+        <item name="android:verticalSpacing">1dp</item>
+    </style>
+
+</resources>

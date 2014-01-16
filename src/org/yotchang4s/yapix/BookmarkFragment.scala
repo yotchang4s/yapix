@@ -92,7 +92,7 @@ class BookmarkFragment extends QuickReturnGridViewFragment {
   protected override def onActivityCreated(savedInstanceState: Bundle) {
     super.onActivityCreated(savedInstanceState)
 
-    bookmarkGridAdapter = new BookmarkGridAdapter(getActivity.getApplicationContext, 100, 5)
+    bookmarkGridAdapter = new BookmarkGridAdapter(getActivity.getApplicationContext, 1)
     bookmarkGridAdapter.setList(bookmarks)
     gridView.setAdapter(bookmarkGridAdapter)
 

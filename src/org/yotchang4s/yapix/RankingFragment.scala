@@ -108,7 +108,7 @@ class RankingFragment extends QuickReturnGridViewFragment {
   protected override def onActivityCreated(savedInstanceState: Bundle) {
     super.onActivityCreated(savedInstanceState)
 
-    rankingGridAdapter = new RankingGridAdapter(getActivity.getApplicationContext, 100, 5)
+    rankingGridAdapter = new RankingGridAdapter(getActivity.getApplicationContext, 1)
     rankingGridAdapter.setList(rankings)
     gridView.setAdapter(rankingGridAdapter)
 
@@ -265,9 +265,9 @@ class RankingFragment extends QuickReturnGridViewFragment {
         if (rankingsPage == 1) {
           val message = if (e.getMessage != null) "\n" + e.getMessage else ""
 
-          ToastMaster.makeText(getActivity, "接続に失敗しました" + message, Toast.LENGTH_LONG).show
+          ToastMaster.makeText(getActivity, "接続に失敗しました", Toast.LENGTH_LONG).show
         }
-        Log.w(TAG, "接続失敗", e);
+        Log.w(TAG, "接続に失敗しました", e);
 
     }(new UIExecutionContext())
 

@@ -3,7 +3,6 @@ package org.yotchang4s.yapix
 import android.os.Bundle
 import org.yotchang4s.pixiv.illust._
 import android.view._
-import com.android.volley.toolbox.NetworkImageView
 import android.support.v4.app.Fragment
 import org.yotchang4s.yapix.YapixConfig._
 import org.yotchang4s.pixiv.PixivException
@@ -15,13 +14,22 @@ import org.yotchang4s.yapix.volley.ImageListenerJava
 import org.yotchang4s.yapix.volley.ImageContainerJava
 import com.android.volley.VolleyError
 import android.util.Log
+import android.widget.ImageView
+import android.graphics.Bitmap
+import android.graphics.Matrix
+import android.content.Context
+import android.util.DisplayMetrics
+import android.util.TypedValue
+import android.graphics.Rect
 
-class IllustFragment extends Fragment {
+class IllustFragment extends Fragment { self =>
   private[this] val TAG = getClass.getSimpleName
 
   private var illust: Illust = null
 
-  private var netWorkImageView: NetworkImageView = null
+  private var netWorkImageView: ImageView = null
+  private var isGetMiddleImage = false
+  private var viewGroup: View = null
 
   protected override def onCreate(savedInstanceState: Bundle) {
     super.onCreate(savedInstanceState)
@@ -30,25 +38,23 @@ class IllustFragment extends Fragment {
   }
 
   override protected def onCreateView(inflater: LayoutInflater, container: ViewGroup, savedInstanceState: Bundle): View = {
-    val viewGroup = inflater.inflate(R.layout.illust_fragment, container, false)
+    viewGroup = inflater.inflate(R.layout.illust_fragment, container, false)
 
-    netWorkImageView = viewGroup.findViewById(R.id.illust).asInstanceOf[NetworkImageView]
+    netWorkImageView = viewGroup.findViewById(R.id.illust).asInstanceOf[ImageView]
+    setBitmapImage(illust)
 
-    ImageCacheManager.imageLoader.foreach(netWorkImageView.setImageUrl(illust.thumbnailImageUrl, _))
+    viewGroup
+  }
+
+  override protected def onActivityCreated(savedInstanceState: Bundle) {
+    super.onActivityCreated(savedInstanceState)
 
     illust match {
       case d: IllustDetail =>
-        ImageCacheManager.imageLoader.foreach(netWorkImageView.setImageUrl(d.middleImageUrl, _))
+        setBitmapImage(d)
       case i =>
         getDetail(illust, YapixConfig.yapixConfig)
     }
-
-    ImageCacheManager.imageLoader.foreach { l =>
-      netWorkImageView.setImageUrl(illust.thumbnailImageUrl, l)
-      getDetail(illust, YapixConfig.yapixConfig)
-    }
-
-    viewGroup
   }
 
   private def getDetail(illust: Illust, config: Config) {
@@ -60,26 +66,84 @@ class IllustFragment extends Fragment {
 
     future.onSuccess {
       case Right(d) =>
-        ImageCacheManager.imageLoader.foreach {
-          _.get(d.middleImageUrl, new ImageListenerJava {
-            def onResponse(response: ImageContainerJava, isImmediate: Boolean) {
-              netWorkImageView.setImageBitmap(response.getBitmap)
-            }
-
-            def onErrorResponse(e: VolleyError) {
-              error(e)
-            }
-          })
-        }
+        setBitmapImage(d)
       case Left(e) =>
         error(e)
 
     }(new UIExecutionContext())
   }
 
+  private def setImageBitmap(bitmap: Bitmap) {
+    if (bitmap == null) {
+      return ;
+    }
+    val srcWidth = bitmap.getWidth(); // 元画像のwidth
+    val srcHeight = bitmap.getHeight(); // 元画像のheight
+
+    val styledAttributes = getActivity.getTheme().obtainStyledAttributes(
+      Array(android.R.attr.actionBarSize));
+    val actionBarSize = styledAttributes.getDimension(0, 0).toInt
+    styledAttributes.recycle();
+
+    val rect = new Rect
+    val window = getActivity.getWindow
+    window.getDecorView().getWindowVisibleDisplayFrame(rect);
+    val statusBarHeight = rect.top;
+
+    val metrics = new DisplayMetrics();
+    getActivity.getApplicationContext.getSystemService(Context.WINDOW_SERVICE).asInstanceOf[WindowManager]
+      .getDefaultDisplay.getMetrics(metrics)
+
+    val screenWidth = metrics.widthPixels.toFloat
+    val screenHeight = (metrics.heightPixels - actionBarSize - statusBarHeight).toFloat;
+
+    val widthScale = screenWidth / srcWidth;
+    val heightScale = screenHeight / srcHeight;
+
+    val matrix = new Matrix();
+    if (widthScale > heightScale) {
+      matrix.postScale(heightScale, heightScale);
+    } else {
+      matrix.postScale(widthScale, widthScale);
+    }
+    val resizedBitmap = Bitmap.createBitmap(bitmap, 0, 0, srcWidth, srcHeight, matrix, true);
+
+    netWorkImageView.setImageBitmap(resizedBitmap)
+  }
+
+  private def setBitmapImage(illust: Illust) {
+
+    val (url, isMiddleImage) = illust match {
+      case d: IllustDetail => (d.middleImageUrl, true)
+      case i => (i.thumbnailImageUrl, false)
+    }
+
+    Log.i(TAG, url)
+    ImageCacheManager.imageLoader.foreach {
+      _.get(url, new ImageListenerJava {
+        def onResponse(response: ImageContainerJava, isImmediate: Boolean) {
+          synchronized {
+            if (!isMiddleImage && isGetMiddleImage) {
+              return
+            }
+
+            // netWorkImageView.setImageBitmap(response.getBitmap)
+            setImageBitmap(response.getBitmap())
+            if (isMiddleImage) {
+              isGetMiddleImage = true
+            }
+          }
+        }
+
+        def onErrorResponse(e: VolleyError) {
+          error(e)
+        }
+      })
+    }
+  }
+
   private def error(e: Exception) {
-    val message = if (e.getMessage != null) "\n" + e.getMessage else ""
-    ToastMaster.makeText(getActivity, "接続に失敗しました" + message, Toast.LENGTH_LONG).show
-    Log.w("接続失敗", e)
+    ToastMaster.makeText(getActivity, "接続に失敗しました", Toast.LENGTH_LONG).show
+    Log.w(TAG, "接続に失敗しました", e)
   }
 }

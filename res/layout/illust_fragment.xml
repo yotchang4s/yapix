@@ -4,9 +4,21 @@
     android:layout_width="match_parent"
     android:layout_height="match_parent" >
 
-    <com.android.volley.toolbox.NetworkImageView
-        android:id="@+id/illust"
+    <ScrollView
         android:layout_width="match_parent"
-        android:layout_height="match_parent" />
+        android:layout_height="match_parent" >
+
+        <LinearLayout
+            android:id="@+id/news_wrapper"
+            android:layout_width="match_parent"
+            android:layout_height="wrap_content" >
+
+            <ImageView
+                android:id="@+id/illust"
+                android:layout_width="match_parent"
+                android:layout_height="match_parent"
+                android:scaleType="matrix" />
+        </LinearLayout>	
+    </ScrollView>
 
 </FrameLayout>

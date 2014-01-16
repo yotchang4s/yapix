@@ -74,6 +74,8 @@ case class FormAuth extends AbstractResourceDelegator {
     } catch {
       case e: IOException => AuthFailure("IO Error",
         Some(new PixivException(PixivException.IOError, Some(e))))
+      case e: Exception => AuthFailure("Unknown Error",
+        Some(new PixivException(PixivException.UnknownError, Some(e))))
     }
   }
 }

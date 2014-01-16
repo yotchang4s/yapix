@@ -6,6 +6,7 @@ import com.android.volley.toolbox.NetworkImageView
 import android.support.v4.view.ViewPager
 import android.support.v4.app.Fragment
 import org.yotchang4s.pixiv.illust.Illust
+import android.view.View.OnKeyListener
 
 class IllustViewPagerFragment extends Fragment {
   private var viewPager: ViewPager = null
@@ -21,12 +22,14 @@ class IllustViewPagerFragment extends Fragment {
 
   protected override def onActivityCreated(savedInstanceState: Bundle) {
     super.onActivityCreated(savedInstanceState)
-    
+
     val adapter = new IllustPagerAdapter(getFragmentManager)
 
-    val illustList = getArguments.get(ArgumentKeys.IllustList).asInstanceOf[Array[Illust]].toList
+    val illustList = {
+      val serializableArray = getArguments.get(ArgumentKeys.IllustList).asInstanceOf[Array[_]]
+      serializableArray.map(_.asInstanceOf[Illust]).toList
+    }
     val illustPosition = getArguments.getInt(ArgumentKeys.IllustListPosition)
-    import org.yotchang4s.scala.WrapAsScala._
 
     adapter.setList(illustList)
     viewPager.setAdapter(adapter)

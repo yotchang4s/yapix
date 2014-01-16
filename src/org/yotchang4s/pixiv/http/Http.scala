@@ -4,8 +4,6 @@ import java.io._
 import java.net._
 import org.yotchang4s.scala.Loan
 import org.yotchang4s.scala.Loan._
-import org.yotchang4s.pixiv.PixivException
-import org.yotchang4s.pixiv.PixivException._
 
 object RequestMethod {
   case object Get extends RequestMethod("GET")
@@ -67,8 +65,7 @@ class Http {
 
     userAgent.foreach(con.setRequestProperty("User-Agent", _))
     referrer.foreach(con.setRequestProperty("Referrer", _))
-    
-    
+
     cookies.foreach { cs =>
       val cookieString = cs.map { cookie =>
         URLEncoder.encode(cookie.key) + "=" + URLEncoder.encode(cookie.value)
@@ -83,18 +80,14 @@ class Http {
     import scala.collection.convert.WrapAsScala._
     val requestProperties = con.getRequestProperties.toMap.map { case (k, v) => (k, v.toList) }
 
-    try {
-      con.connect
+    con.connect
 
-      if (method == RequestMethod.Post && !paramsData.isEmpty()) {
-        for {
-          writer <- Loan(new BufferedWriter(new OutputStreamWriter(con.getOutputStream())))
-        } {
-          writer.write(paramsData)
-        }
+    if (method == RequestMethod.Post && !paramsData.isEmpty()) {
+      for {
+        writer <- Loan(new BufferedWriter(new OutputStreamWriter(con.getOutputStream())))
+      } {
+        writer.write(paramsData)
       }
-    } catch {
-      case e: IOException => throw new PixivException(PixivException.IOError, Some(e))
     }
 
     new HttpResponse(con, con.getResponseCode, requestProperties)

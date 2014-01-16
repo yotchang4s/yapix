@@ -9,16 +9,53 @@ import android.widget._
 import android.widget.AdapterView._
 import android.widget.AbsListView._
 import android.widget.CompoundButton._
+import android.view.View.OnClickListener
+import android.view.View.OnKeyListener
 
 object Listeners extends Listeners
 
 trait Listeners {
-  implicit class ViewOpts(view: View) {
-    def onClick(f: View => Unit) {
-      view.setOnClickListener(new View.OnClickListener {
-        def onClick(v: View): Unit = f(view)
-      })
+
+  object ViewOpts {
+    lazy val onAllListeners = mutable.Map[View, OnAllListener]()
+
+    class OnAllListener extends OnClickListener with OnKeyListener {
+      lazy val onClicks = new mutable.ListBuffer[View => Unit]
+      lazy val onKeys = new mutable.ListBuffer[(View, Int, KeyEvent) => Boolean]
+
+      def onClick(v: View) {
+        onClicks.foreach(_(v))
+      }
+
+      def onKey(view: View, keyCode: Int, event: KeyEvent): Boolean = {
+        onKeys.foreach { v =>
+          val result = v(view, keyCode, event)
+          if (result) return true
+        }
+        return false
+      }
     }
+
+    def getOrCreateOnAllClickListener(view: View) = {
+      val l = onAllListeners.get(view).getOrElse(new OnAllListener)
+      onAllListeners(view) = l
+      view.setOnClickListener(l)
+      l
+    }
+
+    def getOrCreateOnAllKeyListener(view: View) = {
+      val l = onAllListeners.get(view).getOrElse(new OnAllListener)
+      onAllListeners(view) = l
+      view.setOnKeyListener(l)
+      l
+    }
+  }
+
+  implicit class ViewOpts(view: View) {
+    import ViewOpts._
+
+    def onClicks = getOrCreateOnAllClickListener(view).onClicks
+    def onKeys = getOrCreateOnAllKeyListener(view).onKeys
   }
 
   implicit class EditTextOpts(editText: EditText) {
@@ -73,14 +110,14 @@ trait Listeners {
       }
     }
 
-    def getOrCreateOnAllOnItemSelectedListener(adapterView: AdapterView[_]) = {
+    def getOrCreateOnAllItemSelectedListener(adapterView: AdapterView[_]) = {
       val l = onAllListeners.get(adapterView).getOrElse(new OnAllListener)
       onAllListeners(adapterView) = l
       adapterView.setOnItemSelectedListener(l)
       l
     }
 
-    def getOrCreateOnAllOnClickListener(adapterView: AdapterView[_]) = {
+    def getOrCreateOnAllItemClickListener(adapterView: AdapterView[_]) = {
       val l = onAllListeners.get(adapterView).getOrElse(new OnAllListener)
       onAllListeners(adapterView) = l
       adapterView.setOnItemClickListener(l)
@@ -91,10 +128,10 @@ trait Listeners {
   implicit class AdapterViewOpts[V <: AdapterView[_ <: Adapter]](listView: AdapterView[_]) {
     import AdapterViewOpts._
 
-    def onItemSelecteds = getOrCreateOnAllOnItemSelectedListener(listView).onItemSelecteds
-    def onNothingSelecteds = getOrCreateOnAllOnItemSelectedListener(listView).onNothingSelecteds
+    def onItemSelecteds = getOrCreateOnAllItemSelectedListener(listView).onItemSelecteds
+    def onNothingSelecteds = getOrCreateOnAllItemSelectedListener(listView).onNothingSelecteds
 
-    def onItemClicks = getOrCreateOnAllOnClickListener(listView).onItemClicks
+    def onItemClicks = getOrCreateOnAllItemClickListener(listView).onItemClicks
   }
 
   private object AbsListViewOpts {

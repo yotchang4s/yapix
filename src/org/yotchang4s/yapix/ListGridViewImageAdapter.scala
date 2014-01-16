@@ -16,11 +16,8 @@ import org.yotchang4s.pixiv.PixivException
 import com.android.volley.toolbox.NetworkImageView
 import com.android.volley.toolbox.ImageLoader
 
-class ListGridViewImageAdapter[T <: Illust](
-  context: Context,
-  imageDip: Int,
-  paddingDip: Int)
-  extends GridViewSquareDipAdapter[NetworkImageView](context, imageDip, paddingDip) {
+class ListGridViewImageAdapter[T <: Illust](context: Context, paddingDip: Int)
+  extends GridViewSquareDipAdapter[NetworkImageView](context, paddingDip) {
 
   private var dip: Int = 0
   private var list: List[T] = Nil

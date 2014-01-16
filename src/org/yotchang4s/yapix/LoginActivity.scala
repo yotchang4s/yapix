@@ -65,7 +65,7 @@ class LoginActivity extends FragmentActivity { loginActivity =>
       }
     }
 
-    loginButton.onClick { _ =>
+    loginButton.onClicks += { _ =>
       authcation
     }
   }
