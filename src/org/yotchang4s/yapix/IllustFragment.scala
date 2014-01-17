@@ -23,13 +23,18 @@ import android.util.TypedValue
 import android.graphics.Rect
 
 class IllustFragment extends Fragment { self =>
-  private[this] val TAG = getClass.getSimpleName
+  private val TAG = getClass.getSimpleName
 
-  private var illust: Illust = null
+  private[this] var illust: Illust = null
 
-  private var netWorkImageView: ImageView = null
-  private var isGetMiddleImage = false
-  private var viewGroup: View = null
+  private[this] var netWorkImageView: ImageView = null
+  private[this] var isGetMiddleImage = false
+  private[this] var viewGroup: View = null
+
+  private var actionBarSize: Int = 0
+  private var statusBarHeight: Int = 0
+
+  private var windowManager: WindowManager = null
 
   protected override def onCreate(savedInstanceState: Bundle) {
     super.onCreate(savedInstanceState)
@@ -41,7 +46,6 @@ class IllustFragment extends Fragment { self =>
     viewGroup = inflater.inflate(R.layout.illust_fragment, container, false)
 
     netWorkImageView = viewGroup.findViewById(R.id.illust).asInstanceOf[ImageView]
-    setBitmapImage(illust)
 
     viewGroup
   }
@@ -49,15 +53,33 @@ class IllustFragment extends Fragment { self =>
   override protected def onActivityCreated(savedInstanceState: Bundle) {
     super.onActivityCreated(savedInstanceState)
 
+    actionBarSize = {
+      val styledAttributes = getActivity.getTheme.obtainStyledAttributes(
+        Array(android.R.attr.actionBarSize))
+      val abs = styledAttributes.getDimension(0, 0).toInt
+      styledAttributes.recycle
+      abs
+    }
+
+    statusBarHeight = {
+      val rect = new Rect
+      val window = getActivity.getWindow
+      window.getDecorView.getWindowVisibleDisplayFrame(rect);
+      rect.top
+    }
+
+    windowManager = getActivity.getApplicationContext.getSystemService(Context.WINDOW_SERVICE).asInstanceOf[WindowManager]
+
+    asyncGetImageAndThenSetImageBitmap(illust)
     illust match {
       case d: IllustDetail =>
-        setBitmapImage(d)
+        asyncGetImageAndThenSetImageBitmap(d)
       case i =>
-        getDetail(illust, YapixConfig.yapixConfig)
+        asyncGetDetailAndThenSetBitmapImage(illust, YapixConfig.yapixConfig)
     }
   }
 
-  private def getDetail(illust: Illust, config: Config) {
+  private def asyncGetDetailAndThenSetBitmapImage(illust: Illust, config: Config) {
     import scala.concurrent.ExecutionContext.Implicits.global
     import org.yotchang4s.scala.FutureUtil._
     val (future, cancel) = cancellableFuture[Either[PixivException, IllustDetail]](future => {
@@ -66,52 +88,55 @@ class IllustFragment extends Fragment { self =>
 
     future.onSuccess {
       case Right(d) =>
-        setBitmapImage(d)
+        asyncGetImageAndThenSetImageBitmap(d)
       case Left(e) =>
         error(e)
 
-    }(new UIExecutionContext())
+    }(new UIExecutionContext)
   }
 
   private def setImageBitmap(bitmap: Bitmap) {
     if (bitmap == null) {
       return ;
     }
-    val srcWidth = bitmap.getWidth(); // 元画像のwidth
-    val srcHeight = bitmap.getHeight(); // 元画像のheight
+    val srcWidth = bitmap.getWidth
+    val srcHeight = bitmap.getHeight
 
-    val styledAttributes = getActivity.getTheme().obtainStyledAttributes(
-      Array(android.R.attr.actionBarSize));
-    val actionBarSize = styledAttributes.getDimension(0, 0).toInt
-    styledAttributes.recycle();
-
-    val rect = new Rect
-    val window = getActivity.getWindow
-    window.getDecorView().getWindowVisibleDisplayFrame(rect);
-    val statusBarHeight = rect.top;
-
-    val metrics = new DisplayMetrics();
-    getActivity.getApplicationContext.getSystemService(Context.WINDOW_SERVICE).asInstanceOf[WindowManager]
-      .getDefaultDisplay.getMetrics(metrics)
+    val metrics = new DisplayMetrics
+    windowManager.getDefaultDisplay.getMetrics(metrics)
 
     val screenWidth = metrics.widthPixels.toFloat
-    val screenHeight = (metrics.heightPixels - actionBarSize - statusBarHeight).toFloat;
+    val screenHeight = (metrics.heightPixels - actionBarSize - statusBarHeight).toFloat
 
     val widthScale = screenWidth / srcWidth;
     val heightScale = screenHeight / srcHeight;
 
-    val matrix = new Matrix();
-    if (widthScale > heightScale) {
-      matrix.postScale(heightScale, heightScale);
-    } else {
-      matrix.postScale(widthScale, widthScale);
-    }
-    val resizedBitmap = Bitmap.createBitmap(bitmap, 0, 0, srcWidth, srcHeight, matrix, true);
+    val newMatrix = new Matrix
+    val values = new Array[Float](9)
 
+    newMatrix.getValues(values)
+
+    if (widthScale > heightScale) {
+      values(Matrix.MSCALE_X) = heightScale
+      values(Matrix.MSCALE_Y) = heightScale
+    } else {
+      values(Matrix.MSCALE_X) = widthScale
+      values(Matrix.MSCALE_Y) = widthScale
+    }
+
+    newMatrix.setValues(values)
+
+    val resizedBitmap = Bitmap.createBitmap(bitmap, 0, 0, srcWidth, srcHeight, newMatrix, true)
     netWorkImageView.setImageBitmap(resizedBitmap)
+
+    val resizeAfterMatrix = netWorkImageView.getImageMatrix
+
+    resizeAfterMatrix.getValues(values)
+    values(Matrix.MTRANS_X) = (screenWidth - resizedBitmap.getWidth) / 2
+    resizeAfterMatrix.setValues(values)
   }
 
-  private def setBitmapImage(illust: Illust) {
+  private def asyncGetImageAndThenSetImageBitmap(illust: Illust) {
 
     val (url, isMiddleImage) = illust match {
       case d: IllustDetail => (d.middleImageUrl, true)
