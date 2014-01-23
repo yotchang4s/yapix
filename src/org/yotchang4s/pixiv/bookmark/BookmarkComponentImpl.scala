@@ -56,8 +56,8 @@ private[pixiv] trait BookmarkComponentImpl extends BookmarkComponent { this: Ill
           Right(rankings)
 
         } catch {
-          case e: PixivException => Left(e)
           case e: IOException => Left(new HttpResponseException(response, Some(e)))
+          case e: Exception => Left(new PixivException(UnknownError, Some(e)))
         }
       }
     }

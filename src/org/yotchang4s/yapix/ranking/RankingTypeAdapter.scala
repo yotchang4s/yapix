@@ -1,10 +1,11 @@
-package org.yotchang4s.yapix
+package org.yotchang4s.yapix.ranking
 
 import android.view._
 import android.widget._
 import android.content.Context
 import android.widget.CompoundButton.OnCheckedChangeListener
 import android.os.Handler
+import org.yotchang4s.yapix.R
 
 class RankingTypeAdapter(spinner: Spinner) extends BaseAdapter {
   private[this] val inflater = spinner.getContext.getSystemService(Context.LAYOUT_INFLATER_SERVICE).asInstanceOf[LayoutInflater]
@@ -15,11 +16,6 @@ class RankingTypeAdapter(spinner: Spinner) extends BaseAdapter {
 
   def setRankingLabels(rankingLabels: List[RankingLabel]) {
     this.rankingLabels = if (rankingLabels != null) rankingLabels else Nil
-    (new Handler).post(new Runnable {
-      def run() {
-        notifyDataSetChanged();
-      }
-    });
   }
 
   def getRankingLabels: List[RankingLabel] = rankingLabels
@@ -92,4 +88,3 @@ class RankingTypeAdapter(spinner: Spinner) extends BaseAdapter {
 private[this] case class ViewHolder(viewGroup: View, textView: TextView, switchView: CompoundButton)
 
 case class RankingLabel(text: String, existR18: Boolean, r18: Boolean = false)
-

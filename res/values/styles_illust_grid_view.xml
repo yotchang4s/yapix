@@ -1,8 +1,6 @@
 <resources>
 
-    <style name="Yapix" />
-
-    <style name="Yapix.GridView">
+    <style name="Yapix.Widget.IllustGridView">
         <item name="android:background">#09C</item>
         <item name="android:clipToPadding">false</item>
         <item name="android:columnWidth">120dp</item>

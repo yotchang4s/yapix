@@ -16,7 +16,7 @@ import org.yotchang4s.yapix.YapixConfig._
 import android.support.v4.app.Fragment
 import android.annotation.TargetApi
 
-trait QuickReturnGridViewFragment extends Fragment {
+trait QuickReturnGridViewFragment extends AbstractFragment {
   private sealed trait State
   private case object STATE_ONSCREEN extends State
   private case object STATE_OFFSCREEN extends State
@@ -37,6 +37,8 @@ trait QuickReturnGridViewFragment extends Fragment {
 
   protected def createQuickReturnView(rootView: View): View
 
+  var a = 0
+
   override protected def onCreateView(inflater: LayoutInflater, container: ViewGroup, savedInstanceState: Bundle): View = {
     val rootView = inflater.inflate(layout, container, false).asInstanceOf[ViewGroup]
 
@@ -46,9 +48,16 @@ trait QuickReturnGridViewFragment extends Fragment {
 
     observableGrideView.getViewTreeObserver.addOnGlobalLayoutListener(
       new ViewTreeObserver.OnGlobalLayoutListener {
+        var oldAdapterCount = 0
         def onGlobalLayout {
           quickReturnHeight = quickReturnView.getHeight
+          val adapterCount = observableGrideView.getAdapter.getCount
+          if (adapterCount != oldAdapterCount) {
+            observableGrideView.invalidateComputeScrollY
+          }
+          oldAdapterCount = adapterCount
           cachedVerticalScrollRange = observableGrideView.getGridHeight
+
           // 要素0対策
           val adapter = observableGrideView.getAdapter
           if (adapter == null || adapter.getCount == 0) {

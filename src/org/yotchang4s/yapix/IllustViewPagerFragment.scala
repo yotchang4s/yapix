@@ -12,6 +12,8 @@ class IllustViewPagerFragment extends Fragment {
   private var viewPager: ViewPager = null
   private var adapter: IllustPagerAdapter = null
 
+  setRetainInstance(true)
+
   override protected def onCreateView(inflater: LayoutInflater, container: ViewGroup, savedInstanceState: Bundle): View = {
     val viewGroup = inflater.inflate(R.layout.illust_pager_fragment, container, false)
 

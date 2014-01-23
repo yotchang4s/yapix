@@ -130,7 +130,6 @@ trait Listeners {
 
     def onItemSelecteds = getOrCreateOnAllItemSelectedListener(listView).onItemSelecteds
     def onNothingSelecteds = getOrCreateOnAllItemSelectedListener(listView).onNothingSelecteds
-
     def onItemClicks = getOrCreateOnAllItemClickListener(listView).onItemClicks
   }
 
@@ -162,6 +161,6 @@ trait Listeners {
     import AbsListViewOpts._
 
     def onScrolls = getOrCreateOnAllScrollListener(absListView).onScrolls
-    def onScrollChanges = getOrCreateOnAllScrollListener(absListView).onScrollStateChangeds
+    def onScrollStateChangeds = getOrCreateOnAllScrollListener(absListView).onScrollStateChangeds
   }
 }

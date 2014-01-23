@@ -1,0 +1,44 @@
+<resources xmlns:android="http://schemas.android.com/apk/res/android">
+
+    <attr name="illustTagStyle" format="integer|reference" />
+
+    <style name="Yapix.Illust" />
+
+    <style name="Yapix.Illust.Detail">
+        <item name="android:background">#00000000</item>
+    </style>
+
+    <style name="Yapix.Illust.Detail.Tags">
+        <item name="android:horizontalSpacing">10dp</item>
+        <item name="android:verticalSpacing">10dp</item>
+        <item name="android:padding">5dp</item>
+    </style>
+
+    <style name="Yapix.Illust.Detail.Tag" parent="Yapix.Illust.Detail.Item">
+        <item name="android:horizontalSpacing">10dp</item>
+        <item name="android:verticalSpacing">10dp</item>
+        <item name="android:padding">5dp</item>
+        <item name="android:textSize">14sp</item>
+    </style>
+
+    <style name="Yapix.Illust.Detail.Title" parent="Yapix.Illust.Detail.Text">
+        <item name="android:textSize">25sp</item>
+    </style>
+
+    <style name="Yapix.Illust.Detail.SubTitle" parent="Yapix.Illust.Detail.Text">
+        <item name="android:textSize">20sp</item>
+    </style>
+
+    <style name="Yapix.Illust.Detail.Text">
+        <item name="android:textColor">#fff</item>
+        <item name="android:layout_margin">5dp</item>
+    </style>
+
+    <style name="Yapix.Illust.Detail.Item" parent="Yapix.Illust.Detail.Text">
+        <item name="android:textSize">15sp</item>
+        <item name="android:padding">10dp</item>
+        <item name="android:textColor">#000</item>
+        <item name="android:background">@drawable/illust_detail_text_round_corner</item>
+    </style>
+
+</resources>

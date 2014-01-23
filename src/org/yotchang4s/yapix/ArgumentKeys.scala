@@ -4,6 +4,4 @@ object ArgumentKeys {
   val Illust = "Illust"
   val IllustList = "IllustList"
   val IllustListPosition = "IllustListPosition"
-
-  val RankingCategory = "RankingCategoryKey"
 }

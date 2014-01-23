@@ -51,5 +51,12 @@
     <string name="illust">イラスト</string>
     <string name="manga">漫画</string>
     <string name="novel">小説</string>
+    <string name="tag">タグ</string>
+    <string name="contributor">投稿者</string>
+    <string name="postedDateTime">投稿日時</string>
+    <string name="viewCount">閲覧数</string>
+    <string name="evaluationCount">評価回数</string>
+    <string name="evaluation">評価</string>
+    <string name="comment">コメント</string>
 
 </resources>

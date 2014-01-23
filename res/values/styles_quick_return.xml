@@ -1,27 +1,23 @@
 <resources xmlns:android="http://schemas.android.com/apk/res/android">
 
-    <style name="QuickReturn">
+    <style name="Yapix.Widget.QuickReturn">
         <item name="android:layout_width">match_parent</item>
         <item name="android:layout_height">300dp</item>
     </style>
 
-    <style name="QuickReturn.Sticky">
-        <item name="android:background">@drawable/qr_background</item>
-        <item name="android:textColor">@color/sticky_item_text</item>
+    <style name="Yapix.Widget.QuickReturn.Sticky">
         <item name="android:layout_height">50dp</item>
         <item name="android:gravity">center_vertical</item>
-        <item name="android:textAppearance">?android:textAppearanceLarge</item>
-        <item name="android:textAllCaps">true</item>
         <item name="android:focusable">false</item>
     </style>
 
-    <style name="QuickReturn.Sticky.Text">
+    <style name="Yapix.Widget.QuickReturn.Sticky.Text">
         <item name="android:paddingLeft">30sp</item>
         <item name="android:layout_width">0dp</item>
         <item name="android:layout_weight">1</item>
     </style>
 
-    <style name="QuickReturn.Sticky.Switch">
+    <style name="Yapix.Widget.QuickReturn.Sticky.Switch">
         <item name="android:layout_width">wrap_content</item>
         <item name="android:layout_height">match_parent</item>
         <item name="android:checked">false</item>

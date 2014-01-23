@@ -31,6 +31,8 @@ class BookmarkFragment extends QuickReturnGridViewFragment {
   private[this] var bookmarks: List[Illust] = Nil
   private[this] var rankingsPage = 0
 
+  private[this] val gridViewPositionKey = "gridViewPositionKey"
+
   setRetainInstance(true)
 
   override protected def onCreateView(inflater: LayoutInflater, container: ViewGroup,
@@ -40,7 +42,7 @@ class BookmarkFragment extends QuickReturnGridViewFragment {
     gridView.onScrolls += { (view, firstVisibleItem, visibleItemCount, totalItemCount) =>
       scrollLast = totalItemCount != 0 && totalItemCount == firstVisibleItem + visibleItemCount
     }
-    gridView.onScrollChanges += { (view, scrollState) =>
+    gridView.onScrollStateChangeds += { (view, scrollState) =>
       if (BookmarkFragment.this.scrollLast && scrollState == OnScrollListener.SCROLL_STATE_IDLE) {
         paging(nowPrivacyType)
         scrollLast = false
@@ -48,7 +50,7 @@ class BookmarkFragment extends QuickReturnGridViewFragment {
     }
 
     gridView.onItemClicks += { (parent, view, position, id) =>
-      val tran = getFragmentManager.beginTransaction
+      val tran = getChildFragmentManager.beginTransaction
 
       val fragment = new IllustViewPagerFragment
 
@@ -58,8 +60,7 @@ class BookmarkFragment extends QuickReturnGridViewFragment {
 
       fragment.setArguments(bundle)
 
-      tran.add(R.id.content, fragment, "YHAAAAAA")
-      tran.hide(this)
+      tran.add(R.id.bookmarkContent, fragment)
       tran.addToBackStack(null)
       tran.commit
     }
@@ -97,6 +98,15 @@ class BookmarkFragment extends QuickReturnGridViewFragment {
     gridView.setAdapter(bookmarkGridAdapter)
 
     paging(nowPrivacyType)
+  }
+
+  override def onBackPressed = {
+    if (getChildFragmentManager.getBackStackEntryCount() > 0) {
+      getChildFragmentManager.popBackStack
+      true
+    } else {
+      false
+    }
   }
 
   private def get(privacyType: PrivacyType, page: Int): Either[PixivException, List[Illust]] = {

@@ -2,27 +2,22 @@ package org.yotchang4s.yapix;
 
 import scala.collection.convert.WrapAsJava._
 import java.util.ArrayList
-import android.app._
 import android.os.Bundle
 import android.view._
 import android.widget._
 import net.simonvt.menudrawer._
 import org.yotchang4s.android.Listeners._
 import org.yotchang4s.pixiv.ranking._
-import org.yotchang4s.pixiv.ranking.RankingComponent
-import android.support.v4.app.Fragment
-import android.support.v4.app.FragmentActivity
+import org.yotchang4s.yapix.ranking._
+import android.support.v4.app._
+import android.util.Log
 
 class YapixActivity extends FragmentActivity {
+  private[this] val TAG = getClass.getName
 
-  var menuDrawer: MenuDrawer = null
-  var activeViewId = 0;
-
-  val bookmarkFragment = new BookmarkFragment
-  val overallFragment = new RankingFragment
-  val illustFragment = new RankingFragment
-  val mangaFragment = new RankingFragment
-  val novelFragment = new RankingFragment
+  private[this] var fragment: Fragment = null
+  private[this] var menuDrawer: MenuDrawer = null
+  private[this] var activeViewId = 0;
 
   override def onCreate(savedInstanceState: Bundle) {
     super.onCreate(savedInstanceState)
@@ -36,46 +31,64 @@ class YapixActivity extends FragmentActivity {
     menuDrawer.setSlideDrawable(R.drawable.ic_drawer);
     //menuDrawer.peekDrawer
 
-    findViewById(R.id.menuDrawerTimeline).onClicks += { menuDrawerActiveViewChange(_) }
-    findViewById(R.id.menuDrawerSearch).onClicks += { menuDrawerActiveViewChange(_) }
-    findViewById(R.id.menuDrawerBookmark).onClicks += {
-      changeFragment(bookmarkFragment, _)
+    findViewById(R.id.menuDrawerTimeline).onClicks += { v =>
+      menuDrawerActiveViewChange(v)
     }
-    findViewById(R.id.menuDrawerProfile).onClicks += { menuDrawerActiveViewChange(_) }
-
-    findViewById(R.id.menuDrawerRankingOverall).onClicks += {
-      changeRankingFragment(overallFragment, Overall, _)
+    findViewById(R.id.menuDrawerSearch).onClicks += { v =>
+      menuDrawerActiveViewChange(v)
     }
-    findViewById(R.id.menuDrawerRankingIllust).onClicks += {
-      changeRankingFragment(illustFragment, Illust, _)
+    findViewById(R.id.menuDrawerBookmark).onClicks += { v =>
+      changeFragment(classOf[BookmarkFragment])
+      menuDrawerActiveViewChange(v)
     }
-    findViewById(R.id.menuDrawerRankingManga).onClicks += {
-      changeRankingFragment(mangaFragment, Manga, _)
-    }
-    findViewById(R.id.menuDrawerRankingNovel).onClicks += {
-      changeRankingFragment(novelFragment, Novel, _)
+    findViewById(R.id.menuDrawerProfile).onClicks += { v =>
+      menuDrawerActiveViewChange(v)
     }
 
-    menuDrawerActiveViewChange(findViewById(R.id.menuDrawerTimeline))
+    findViewById(R.id.menuDrawerRankingOverall).onClicks += { v =>
+      changeFragment(classOf[OverallRankingFragment])
+      menuDrawerActiveViewChange(v)
+    }
+    findViewById(R.id.menuDrawerRankingIllust).onClicks += { v =>
+      changeFragment(classOf[IllustRankingFragment])
+      menuDrawerActiveViewChange(v)
+    }
+    findViewById(R.id.menuDrawerRankingManga).onClicks += { v =>
+      changeFragment(classOf[MangaRankingFragment])
+      menuDrawerActiveViewChange(v)
+    }
+    findViewById(R.id.menuDrawerRankingNovel).onClicks += { v =>
+      changeFragment(classOf[NovelRankingFragment])
+      menuDrawerActiveViewChange(v)
+    }
+
+    changeFragment(classOf[OverallRankingFragment])
+    menuDrawerActiveViewChange(findViewById(R.id.menuDrawerRankingOverall))
   }
 
-  private def changeRankingFragment(rankingFragment: RankingFragment, rankingCategory: RankingCategory, view: View) {
-    rankingFragment.getArguments match {
-      case null =>
-        val bundle = new Bundle
-        bundle.putSerializable(ArgumentKeys.RankingCategory, rankingCategory)
-        rankingFragment.setArguments(bundle)
+  private def changeFragment[T <: Fragment](fragmentClass: Class[T]) {
+    Log.i(TAG, "change fragment")
+    val fm = getSupportFragmentManager
+    val fragment = fm.findFragmentByTag(fragmentClass.getName)
+
+    val tran = fm.beginTransaction
+
+    if (this.fragment != null) {
+      //tran.detach(this.fragment)
+      tran.hide(this.fragment)
+    }
+    this.fragment = fragment match {
+      case f: Fragment =>
+        //tran.attach(f)
+        tran.show(f)
+        f
       case _ =>
+        val f = Fragment.instantiate(this, fragmentClass.getName, null)
+        //tran.add(android.R.id.content, f, fragmentClass.getName)
+        tran.add(android.R.id.content, f, fragmentClass.getName)
+        f
     }
 
-    changeFragment(rankingFragment, view)
-  }
-
-  private def changeFragment(fragment: Fragment, view: View) {
-    menuDrawerActiveViewChange(view)
-
-    val tran = getSupportFragmentManager.beginTransaction
-    tran.replace(R.id.content, fragment)
     tran.commit
   }
 
@@ -95,10 +108,19 @@ class YapixActivity extends FragmentActivity {
   }
 
   override def onBackPressed {
-    val drawerState = menuDrawer.getDrawerState
-    if (drawerState == MenuDrawer.STATE_OPEN || drawerState == MenuDrawer.STATE_OPENING) {
-      menuDrawer.closeMenu
-    } else {
+    val callSuper = {
+      val drawerState = menuDrawer.getDrawerState
+      if (drawerState == MenuDrawer.STATE_OPEN || drawerState == MenuDrawer.STATE_OPENING) {
+        menuDrawer.closeMenu
+        false
+
+      } else if (fragment != null && fragment.isInstanceOf[AbstractFragment]) {
+        !fragment.asInstanceOf[AbstractFragment].onBackPressed
+      } else {
+        true
+      }
+    }
+    if (callSuper) {
       super.onBackPressed
     }
   }

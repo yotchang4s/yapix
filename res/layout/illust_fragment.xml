@@ -1,24 +1,154 @@
 <?xml version="1.0" encoding="utf-8"?>
-<FrameLayout xmlns:android="http://schemas.android.com/apk/res/android"
+<ScrollView xmlns:android="http://schemas.android.com/apk/res/android"
     xmlns:tools="http://schemas.android.com/tools"
     android:layout_width="match_parent"
     android:layout_height="match_parent" >
 
-    <ScrollView
+    <LinearLayout
         android:layout_width="match_parent"
-        android:layout_height="match_parent" >
+        android:layout_height="wrap_content"
+        android:descendantFocusability="blocksDescendants"
+        android:orientation="vertical" >
+
+        <ImageView
+            android:id="@+id/illust"
+            android:layout_width="match_parent"
+            android:layout_height="match_parent"
+            android:scaleType="matrix" />
+
+        <TextView
+            android:id="@+id/illustTitle"
+            style="@style/Yapix.Illust.Detail.Title"
+            android:layout_width="match_parent"
+            android:layout_height="wrap_content" />
+
+        <ProgressBar
+            android:id="@+id/illustDetailProgressBar"
+            style="@android:style/Widget.ProgressBar"
+            android:layout_width="match_parent"
+            android:layout_height="wrap_content"
+            android:visibility="gone" />
 
         <LinearLayout
-            android:id="@+id/news_wrapper"
+            android:id="@+id/illustDetail"
+            style="@style/Yapix.Illust.Detail"
             android:layout_width="match_parent"
-            android:layout_height="wrap_content" >
+            android:layout_height="wrap_content"
+            android:orientation="vertical"
+            android:visibility="gone" >
 
-            <ImageView
-                android:id="@+id/illust"
+            <LinearLayout
+                android:id="@+id/illustCaptionContainer"
+                style="@style/Yapix.Illust.Detail.Item"
                 android:layout_width="match_parent"
-                android:layout_height="match_parent"
-                android:scaleType="matrix" />
-        </LinearLayout>	
-    </ScrollView>
+                android:layout_height="wrap_content" >
 
-</FrameLayout>
+                <WebView
+                    android:id="@+id/illustCaption"
+                    android:layout_width="match_parent"
+                    android:layout_height="wrap_content" />
+            </LinearLayout>
+
+            <TableLayout
+                android:layout_width="match_parent"
+                android:layout_height="wrap_content"
+                android:shrinkColumns="0"
+                android:stretchColumns="0" >
+
+                <TableRow>
+
+                    <TextView
+                        style="@style/Yapix.Illust.Detail.SubTitle"
+                        android:layout_width="wrap_content"
+                        android:layout_height="wrap_content"
+                        android:text="@string/contributor" />
+
+                    <TextView
+                        style="@style/Yapix.Illust.Detail.SubTitle"
+                        android:layout_width="wrap_content"
+                        android:layout_height="wrap_content"
+                        android:text="@string/postedDateTime" />
+                </TableRow>
+
+                <TableRow>
+
+                    <TextView
+                        android:id="@+id/illustAuthor"
+                        style="@style/Yapix.Illust.Detail.Item"
+                        android:layout_width="wrap_content"
+                        android:layout_height="wrap_content" />
+
+                    <TextView
+                        android:id="@+id/illustPostedDateTime"
+                        style="@style/Yapix.Illust.Detail.Item"
+                        android:layout_width="wrap_content"
+                        android:layout_height="wrap_content" />
+                </TableRow>
+            </TableLayout>
+
+            <TextView
+                style="@style/Yapix.Illust.Detail.SubTitle"
+                android:layout_width="match_parent"
+                android:layout_height="wrap_content"
+                android:text="@string/tag" />
+
+            <org.yotchang4s.android.FlowLayout
+                android:id="@+id/illustTags"
+                style="@style/Yapix.Illust.Detail.Tags"
+                android:layout_width="match_parent"
+                android:layout_height="wrap_content"
+                android:horizontalSpacing="5dp"
+                android:verticalSpacing="5dp" />
+
+            <TableLayout
+                android:layout_width="match_parent"
+                android:layout_height="wrap_content"
+                android:shrinkColumns="0"
+                android:stretchColumns="0,1,2" >
+
+                <TableRow>
+
+                    <TextView
+                        style="@style/Yapix.Illust.Detail.SubTitle"
+                        android:layout_width="0dp"
+                        android:layout_height="wrap_content"
+                        android:text="@string/viewCount" />
+
+                    <TextView
+                        style="@style/Yapix.Illust.Detail.SubTitle"
+                        android:layout_width="0dp"
+                        android:layout_height="wrap_content"
+                        android:text="@string/evaluationCount" />
+
+                    <TextView
+                        style="@style/Yapix.Illust.Detail.SubTitle"
+                        android:layout_width="0dp"
+                        android:layout_height="wrap_content"
+                        android:text="@string/evaluation" />
+                </TableRow>
+
+                <TableRow>
+
+                    <TextView
+                        android:id="@+id/illustViewCount"
+                        style="@style/Yapix.Illust.Detail.Item"
+                        android:layout_width="0dp"
+                        android:layout_height="wrap_content" />
+
+                    <TextView
+                        android:id="@+id/illustEvaluationCount"
+                        style="@style/Yapix.Illust.Detail.Item"
+                        android:layout_width="0dp"
+                        android:layout_height="wrap_content" />
+
+                    <TextView
+                        android:id="@+id/illustEvaluation"
+                        style="@style/Yapix.Illust.Detail.Item"
+                        android:layout_width="0dp"
+                        android:layout_height="wrap_content" />
+                </TableRow>
+            </TableLayout>
+        </LinearLayout>
+    </LinearLayout>
+
+</ScrollView>

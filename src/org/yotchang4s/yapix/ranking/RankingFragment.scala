@@ -1,13 +1,11 @@
-package org.yotchang4s.yapix
+package org.yotchang4s.yapix.ranking
 
 import scala.concurrent._
-
 import android.os.Bundle
 import android.os.Handler
 import android.util.Log
 import android.view._
-import android.widget.AbsListView.OnScrollListener
-import android.widget.AdapterView.OnItemSelectedListener
+import android.widget.AbsListView._
 import android.widget._
 import org.yotchang4s.android._
 import org.yotchang4s.android.Listeners._
@@ -15,17 +13,21 @@ import org.yotchang4s.pixiv._
 import org.yotchang4s.pixiv.illust._
 import org.yotchang4s.pixiv.ranking._
 import org.yotchang4s.yapix.YapixConfig._
+import org.yotchang4s.yapix._
+import android.app.Activity
+import android.support.v4.app.FragmentManager.OnBackStackChangedListener
 
-class RankingFragment extends QuickReturnGridViewFragment {
+trait RankingFragment extends QuickReturnGridViewFragment {
   protected val layout: Int = R.layout.ranking_fragment
   protected val observableGridViewId: Int = R.id.rankingGridview
+
+  val rankingCategory: RankingCategory
 
   private[this] val TAG = getClass.getSimpleName
 
   private[this] var quickReturnView: Spinner = null
   private[this] var rankingGridAdapter: RankingGridAdapter = null
   private[this] var rankingTypeAdapter: RankingTypeAdapter = null
-  private[this] var rankingCategory: RankingCategory = null
 
   private[this] var currentFuture: Option[(Future[Either[PixivException, List[Illust]]], () => Boolean)] = None
 
@@ -34,18 +36,10 @@ class RankingFragment extends QuickReturnGridViewFragment {
   private[this] var scrollLast = false
   private[this] var rankings: List[Illust] = Nil
   private[this] var rankingsPage = 0
+  private[this] var gridViewPosition = 0
+  private[this] var gridViewTop = 0
 
   setRetainInstance(true)
-
-  protected override def onCreate(savedInstanceState: Bundle) {
-    super.onCreate(savedInstanceState)
-
-    rankingCategory =
-      Option(getArguments.get(ArgumentKeys.RankingCategory).asInstanceOf[RankingCategory]) match {
-        case Some(x) => x
-        case None => Overall
-      }
-  }
 
   override protected def onCreateView(inflater: LayoutInflater, container: ViewGroup,
     savedInstanceState: Bundle): View = {
@@ -54,15 +48,19 @@ class RankingFragment extends QuickReturnGridViewFragment {
     gridView.onScrolls += { (view, firstVisibleItem, visibleItemCount, totalItemCount) =>
       scrollLast = totalItemCount != 0 && totalItemCount == firstVisibleItem + visibleItemCount
     }
-    gridView.onScrollChanges += { (view, scrollState) =>
-      if (RankingFragment.this.scrollLast && scrollState == OnScrollListener.SCROLL_STATE_IDLE) {
-        paging(nowRankingType)
-        scrollLast = false
+    gridView.onScrollStateChangeds += { (view, scrollState) =>
+      if (scrollState == OnScrollListener.SCROLL_STATE_IDLE) {
+        gridViewPosition = gridView.getFirstVisiblePosition
+        gridViewTop = if (gridView.getChildCount() > 0) gridView.getChildAt(0).getTop else 0
+        if (RankingFragment.this.scrollLast) {
+          paging(nowRankingType)
+          scrollLast = false
+        }
       }
     }
 
     gridView.onItemClicks += { (parent, view, position, id) =>
-      val tran = getFragmentManager.beginTransaction
+      val tran = getChildFragmentManager.beginTransaction
 
       val fragment = new IllustViewPagerFragment
 
@@ -72,49 +70,65 @@ class RankingFragment extends QuickReturnGridViewFragment {
 
       fragment.setArguments(bundle)
 
-      tran.add(R.id.content, fragment, "YHAAAAAA")
-      tran.hide(this)
+      tran.add(R.id.rankingContent, fragment, "YHAAAAAA")
       tran.addToBackStack(null)
       tran.commit
     }
     view
   }
 
+  protected override def onDestroyView {
+    super.onDestroyView
+
+    gridView.onScrolls.clear
+    gridView.onScrollStateChangeds.clear
+    gridView.onItemClicks.clear
+    quickReturnView.onItemSelecteds.clear
+  }
+
   protected def createQuickReturnView(rootView: View): View = {
     quickReturnView = rootView.findViewById(R.id.rankingQuickReturnSticky).asInstanceOf[Spinner]
-
     quickReturnView.onItemSelecteds += { (parent, view, position, id) =>
-      val newRankingLabels =
-        for ((label, i) <- rankingTypeAdapter.getRankingLabels.zipWithIndex) yield {
-          i match {
-            case p if (p == position) =>
-              RankingLabel(label.text, label.existR18, label.r18)
-            case _ => label
-          }
-        }
-      rankingTypeAdapter.setRankingLabels(rankingTypeAdapter.getRankingLabels)
-
       val oldRankingType = nowRankingType
       nowRankingType = getCurrentRankingType(rankingCategory, position, rankingTypeAdapter.getRankingLabels(position).r18)
       if (nowRankingType != oldRankingType) {
+        rankingTypeAdapter.setRankingLabels(rankingTypeAdapter.getRankingLabels)
+        rankingTypeAdapter.notifyDataSetChanged
         rankings = Nil
+        paging(nowRankingType)
       }
-      paging(nowRankingType)
     }
-
     quickReturnView
   }
 
   protected override def onActivityCreated(savedInstanceState: Bundle) {
     super.onActivityCreated(savedInstanceState)
 
-    rankingGridAdapter = new RankingGridAdapter(getActivity.getApplicationContext, 1)
-    rankingGridAdapter.setList(rankings)
+    if (rankingTypeAdapter == null) {
+      rankingTypeAdapter = new RankingTypeAdapter(quickReturnView)
+      rankingTypeAdapter.setRankingLabels(createRankingLabels(rankingCategory))
+    }
+    quickReturnView.setAdapter(rankingTypeAdapter)
+
+    if (rankingGridAdapter == null) {
+      rankingGridAdapter = new RankingGridAdapter(getActivity.getApplicationContext, 1)
+      rankingGridAdapter.setList(rankings)
+    }
     gridView.setAdapter(rankingGridAdapter)
 
-    rankingTypeAdapter = new RankingTypeAdapter(this.quickReturnView)
-    rankingTypeAdapter.setRankingLabels(createRankingLabels(rankingCategory))
-    quickReturnView.setAdapter(rankingTypeAdapter)
+    gridView.setSelection(gridViewPosition)
+    gridView.smoothScrollBy(-gridViewTop, 0)
+
+    if (rankings == Nil) {
+      paging(nowRankingType)
+    }
+  }
+
+  override def onBackPressed = {
+    if (getChildFragmentManager.getBackStackEntryCount() > 0) {
+      getChildFragmentManager.popBackStack
+      true
+    } else false
   }
 
   private def createRankingLabels(rankingCategory: RankingCategory): List[RankingLabel] = {
@@ -256,7 +270,6 @@ class RankingFragment extends QuickReturnGridViewFragment {
       case Right(x) =>
         rankings = rankings ::: x
         rankingGridAdapter.setList(rankings)
-        gridView.invalidateComputeScrollY
         rankingGridAdapter.notifyDataSetChanged
 
         rankingsPage = rankingsPage + 1

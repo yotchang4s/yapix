@@ -13,6 +13,7 @@ import org.yotchang4s.pixiv.PixivException._
 import org.yotchang4s.pixiv.user.User
 import java.io.BufferedReader
 import java.io.IOException
+import java.util.Date
 
 private[pixiv] trait IllustComponentImpl extends IllustComponent {
   private val illustUrlBase = "http://spapi.pixiv.net/iphone/illust.php?"
@@ -78,11 +79,13 @@ private[pixiv] class IllustImpl(@transient val illust: IllustComponent,
 private[this] class IllustDetailImpl(
   val illust: Illust,
   val caption: String,
+  val postedDateTime: Date,
   val middleImageUrl: String,
   val imageUrl: String,
   val tags: List[String],
-  val totalScore: Int,
   val viewCount: Int,
+  val evaluationCount: Int,
+  val evaluation: Int,
   val bookmarkCount: Int,
   val user: User) extends IllustDetail {
 
