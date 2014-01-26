@@ -30,7 +30,7 @@ class LoginActivity extends FragmentActivity { loginActivity =>
   protected override def onCreate(savedInstanceState: Bundle) {
     super.onCreate(savedInstanceState)
 
-    setContentView(R.layout.login_fragment)
+    setContentView(R.layout.login_activity)
 
     val loginPixivIdEditText = findViewById(R.id.login_pixiv_id).asInstanceOf[EditText]
     val loginPixivPasswordEditText = findViewById(R.id.login_pixiv_password).asInstanceOf[EditText]

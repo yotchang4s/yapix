@@ -144,8 +144,11 @@ class IllustFragment extends AbstractFragment { self =>
 
     val (screenWidth, screenHeight) = getScreenSize(getActivity)
 
-    val widthScale = screenWidth / srcWidth;
-    val heightScale = screenHeight / srcHeight;
+    val drawWidth = screenWidth.toFloat
+    val drawHeight = (screenHeight - getStatusBarSize(getActivity) - getActionBarSize(getActivity)).toFloat
+
+    val widthScale = drawWidth / srcWidth;
+    val heightScale = drawHeight / srcHeight;
 
     val newMatrix = new Matrix
     val values = new Array[Float](9)
@@ -168,7 +171,7 @@ class IllustFragment extends AbstractFragment { self =>
     val resizeAfterMatrix = netWorkImageView.getImageMatrix
 
     resizeAfterMatrix.getValues(values)
-    values(Matrix.MTRANS_X) = (screenWidth - resizedBitmap.getWidth) / 2
+    values(Matrix.MTRANS_X) = (drawWidth - resizedBitmap.getWidth) / 2
     resizeAfterMatrix.setValues(values)
 
     netWorkImageView.setImageMatrix(resizeAfterMatrix)

@@ -25,7 +25,7 @@ class YapixActivity extends FragmentActivity {
     getActionBar.setDisplayHomeAsUpEnabled(true);
 
     menuDrawer = MenuDrawer.attach(this, MenuDrawer.Type.BEHIND, Position.LEFT, MenuDrawer.MENU_DRAG_WINDOW);
-    menuDrawer.setContentView(R.layout.activity_main);
+    menuDrawer.setContentView(R.layout.yapix_activity);
     menuDrawer.setMenuView(R.layout.menu_drawer);
     menuDrawer.setDrawerIndicatorEnabled(true);
     menuDrawer.setSlideDrawable(R.drawable.ic_drawer);

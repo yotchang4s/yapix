@@ -29,7 +29,7 @@
             </intent-filter>
         </activity>
         <activity
-            android:name=".LoginActivity"
+            android:name=".login.LoginActivity"
             android:noHistory="true" />
         <activity android:name=".YapixActivity" />
         <activity android:name=".manga.MangaActivity" />

@@ -57,7 +57,6 @@ class LoggedInDialogFragment extends DialogFragment {
   private def asyncLogin {
     val f = future {
       val auth = new FormAuth
-      Thread.sleep(2000)
       auth.authcation
     }
 
@@ -74,6 +73,7 @@ class LoggedInDialogFragment extends DialogFragment {
       }
       case AuthFailure(msg, e) =>
         Log.w(TAG, msg, e getOrElse null)
+
         ToastMaster.makeText(getActivity, "ログインに失敗しました\n" + msg, Toast.LENGTH_SHORT).show
 
         _onReturn.foreach(_(Ng))

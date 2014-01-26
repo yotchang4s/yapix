@@ -115,8 +115,8 @@ class MangaPagerAdapter(
     val drawWidth = screenWidth.toFloat
     val drawHeight = (screenHeight - actionBarSize - statusBarHeight).toFloat
 
-    val widthScale = drawWidth / srcWidth;
-    val heightScale = drawHeight / srcHeight;
+    val widthScale = drawWidth / srcWidth
+    val heightScale = drawHeight / srcHeight
 
     val newMatrix = new Matrix
     val values = new Array[Float](9)
