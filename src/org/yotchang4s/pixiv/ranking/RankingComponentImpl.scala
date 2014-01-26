@@ -56,6 +56,22 @@ private[pixiv] trait RankingComponentImpl extends RankingComponent { this: Illus
       getIllust(illustRankingUrl + "&content=illust", page)(config)
     }
 
+    def manga(rankingType: MangaRankingType, page: Int)(implicit config: Config): Either[PixivException, List[Illust]] = {
+      import Manga._
+      val mangaRankingUrl = rankingType match {
+        case Daily => rankingUrlBase + "mode=daily"
+        case Weekly => rankingUrlBase + "mode=weekly"
+        case Monthly => rankingUrlBase + "mode=monthly"
+        case Rookie => rankingUrlBase + "mode=rookie"
+        case DailyR18 => rankingUrlBase + "mode=daily_r18"
+        case WeeklyR18 => rankingUrlBase + "mode=weekly_r18"
+        case MaleR18 => rankingUrlBase + "mode=male_r18"
+        case FemaleR18 => rankingUrlBase + "mode=female_r18"
+      }
+
+      getIllust(mangaRankingUrl + "&content=manga", page)(config)
+    }
+
     private def getIllust(baseUrl: String, page: Int)(implicit config: Config): Either[PixivException, List[Illust]] = {
       import Overall._
 
@@ -84,9 +100,6 @@ private[pixiv] trait RankingComponentImpl extends RankingComponent { this: Illus
         }
       }
     }
-
-    def manga(rankingType: MangaRankingType, page: Int)(implicit config: Config): Either[PixivException, List[Illust]] =
-      Left(new PixivException(NoImplements))
 
     def novel(rankingType: NovelRankingType, page: Int)(implicit config: Config): Either[PixivException, List[Illust]] =
       Left(new PixivException(NoImplements))
