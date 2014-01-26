@@ -31,7 +31,9 @@ case class YapixConfig(sharedPreferences: SharedPreferences) extends Config {
   private var _authToken: Option[String] = None
 
   def authToken: Option[String] = _authToken
-  def authToken(authToken: String) { _authToken = Option(authToken) }
+  def authToken(authToken: String) {
+    _authToken = Option(authToken)
+  }
 
   def pixivId: Option[String] = getString(pixivIdKey)
   def pixivId(pixivId: String) { putString(pixivIdKey, pixivId) }

@@ -1,0 +1,25 @@
+<resources xmlns:android="http://schemas.android.com/apk/res/android">
+
+    <style name="Yapix.Login" parent="@style/Yapix.Widget" />
+
+    <style name="Yapix.Login.Row">
+        <item name="android:padding">5dp</item>
+    </style>
+
+    <style name="Yapix.Login.Title">
+        <item name="android:padding">5dp</item>
+    </style>
+
+    <style name="Yapix.Login.Edit">
+        <item name="android:textColor">@color/textBackgroundColor</item>
+        <item name="android:background">@drawable/text_round_corner</item>
+        <item name="android:padding">5dp</item>
+    </style>
+    
+    <style name="Yapix.Login.Button">
+        <item name="android:textColor">@color/textBackgroundColor</item>
+        <item name="android:background">@drawable/button_round_corner</item>
+        <item name="android:padding">5dp</item>
+    </style>
+
+</resources>

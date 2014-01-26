@@ -1,0 +1,25 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<LinearLayout xmlns:android="http://schemas.android.com/apk/res/android"
+    android:layout_width="match_parent"
+    android:layout_height="match_parent"
+    android:background="@color/windowBackground"
+    android:gravity="center_vertical"
+    android:orientation="horizontal" >
+
+    <TextView
+        style="@style/Yapix.LoggedIn.Text"
+        android:layout_width="0dp"
+        android:layout_height="50dp"
+        android:layout_weight="1.5"
+        android:gravity="right|center_vertical"
+        android:text="@string/loggedIn" />
+
+    <ProgressBar
+        android:id="@+id/mangaProgressBar"
+        style="@style/Yapix.LoggedIn.ProgressBar"
+        android:layout_width="0dp"
+        android:layout_height="50dp" 
+        android:layout_gravity="left|center_vertical"
+        android:layout_weight="1"/>
+
+</LinearLayout>

@@ -1,18 +1,11 @@
 package org.yotchang4s.yapix;
 
 import android.os.Bundle
-import android.app.Activity
-import android.view._
-import org.yotchang4s.android._
-import android.widget._
-import scala.collection.convert.WrapAsJava._
-import android.app.ActionBar
-import android.app.Fragment
 import android.content.Intent
+import android.support.v4.app.FragmentActivity
+import org.yotchang4s.yapix.login.LoginActivity
 
-class MainActivity extends Activity {
-  val PREFERENCES_FILE_NAME = "preference"
-
+class MainActivity extends FragmentActivity {
   override def onCreate(savedInstanceState: Bundle) {
     super.onCreate(savedInstanceState)
 

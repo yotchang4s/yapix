@@ -1,8 +1,9 @@
-<RelativeLayout xmlns:android="http://schemas.android.com/apk/res/android"
+<LinearLayout xmlns:android="http://schemas.android.com/apk/res/android"
     xmlns:tools="http://schemas.android.com/tools"
     android:layout_width="match_parent"
     android:layout_height="match_parent"
-    tools:context=".LoginActivity" >
+    android:orientation="vertical"
+    tools:context=".login.LoginActivity" >
 
     <TableLayout
         android:id="@+id/table_position"
@@ -10,49 +11,50 @@
         android:layout_height="wrap_content"
         android:stretchColumns="1" >
 
-        <TableRow>
+        <TableRow style="@style/Yapix.Login.Row" >
 
             <TextView
+                style="@style/Yapix.Login.Title"
                 android:layout_width="wrap_content"
                 android:layout_height="wrap_content"
                 android:text="@string/userName" />
 
             <EditText
                 android:id="@+id/login_pixiv_id"
-                android:layout_width="match_parent"
+                style="@style/Yapix.Login.Edit"
+                android:layout_width="wrap_content"
                 android:layout_height="wrap_content"
+                android:layout_marginRight="10dp"
                 android:inputType="text" />
         </TableRow>
 
-        <TableRow>
+        <TableRow style="@style/Yapix.Login.Row" >
 
             <TextView
+                style="@style/Yapix.Login.Title"
                 android:layout_width="wrap_content"
                 android:layout_height="wrap_content"
                 android:text="@string/password" />
 
             <EditText
                 android:id="@+id/login_pixiv_password"
-                android:layout_width="match_parent"
+                style="@style/Yapix.Login.Edit"
+                android:layout_width="wrap_content"
                 android:layout_height="wrap_content"
+                android:layout_marginRight="10dp"
                 android:inputType="textPassword" />
         </TableRow>
     </TableLayout>
 
-    <LinearLayout
+    <Button
+        android:id="@+id/login_button"
+        style="@style/Yapix.Login.Button"
         android:layout_width="match_parent"
         android:layout_height="wrap_content"
-        android:layout_below="@id/table_position"
-        android:layout_centerHorizontal="true"
-        android:layout_marginTop="15dp" >
+        android:layout_marginLeft="5dp"
+        android:layout_marginRight="5dp"
+        android:layout_marginTop="10dp"
+        android:enabled="true"
+        android:text="@string/login" />
 
-        <Button
-            android:id="@+id/login_button"
-            android:layout_width="0dp"
-            android:layout_height="wrap_content"
-            android:layout_weight="1"
-            android:enabled="true"
-            android:text="ログイン" />
-    </LinearLayout>
-
-</RelativeLayout>
+</LinearLayout>

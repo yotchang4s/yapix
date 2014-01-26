@@ -58,5 +58,7 @@
     <string name="evaluationCount">評価回数</string>
     <string name="evaluation">評価</string>
     <string name="comment">コメント</string>
+    <string name="login">ログイン</string>
+    <string name="loggedIn">ログイン中</string>
 
 </resources>

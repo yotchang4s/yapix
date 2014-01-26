@@ -1,4 +1,4 @@
-package org.yotchang4s.yapix
+package org.yotchang4s.yapix.login
 
 import android.animation._
 import android.content.Intent
@@ -16,6 +16,9 @@ import org.yotchang4s.pixiv.auth._
 import android.support.v4.app.FragmentActivity
 import android.app.ProgressDialog
 import android.app.Dialog
+import org.yotchang4s.yapix.YapixActivity
+import org.yotchang4s.yapix.YapixConfig
+import org.yotchang4s.yapix.R
 
 class LoginActivity extends FragmentActivity { loginActivity =>
   private[this] val TAG = getClass.getName
@@ -27,7 +30,7 @@ class LoginActivity extends FragmentActivity { loginActivity =>
   protected override def onCreate(savedInstanceState: Bundle) {
     super.onCreate(savedInstanceState)
 
-    setContentView(R.layout.activity_login)
+    setContentView(R.layout.login_fragment)
 
     val loginPixivIdEditText = findViewById(R.id.login_pixiv_id).asInstanceOf[EditText]
     val loginPixivPasswordEditText = findViewById(R.id.login_pixiv_password).asInstanceOf[EditText]
@@ -71,69 +74,22 @@ class LoginActivity extends FragmentActivity { loginActivity =>
   }
 
   private def authcation {
-    val loginTask = new LoginTask
-    loginTask.execute(None)
+    import LoggedInDialogFragment._
+
+    val dialog = new LoggedInDialogFragment
+    dialog.onReturn { r =>
+      r match {
+        case Ok =>
+          moveYapixActivity
+        case Ng =>
+      }
+    }
+    dialog.show(getSupportFragmentManager, "Login")
   }
 
   private def moveYapixActivity {
     val intent = new Intent(getApplicationContext, classOf[YapixActivity])
     startActivity(intent);
     overridePendingTransition(0, 0);
-  }
-
-  protected override def onCreateDialog(id: Int): Dialog = {
-    val dialog = super.onCreateDialog(id)
-    id match {
-      case PROGRESS_DIALOG =>
-        progressDialog = new ProgressDialog(LoginActivity.this);
-        progressDialog.setTitle("ログイン中");
-        progressDialog.setMessage("お待ちください");
-        progressDialog.setIndeterminate(true);
-        progressDialog.setProgressStyle(ProgressDialog.STYLE_SPINNER);
-        progressDialog
-
-      case _ => dialog
-    }
-  }
-
-  protected override def onPause {
-    super.onPause
-
-    if (progressDialog != null) {
-      progressDialog = null;
-      dismissDialog(PROGRESS_DIALOG) // ダイアログのグルグルを終了
-    }
-  }
-
-  class LoginTask extends AsyncTask[Option[Nothing], Option[Nothing], AuthResult] {
-
-    protected override def onPreExecute {
-
-      showDialog(PROGRESS_DIALOG)
-    }
-
-    protected override def doInBackground(params: Option[Nothing]): AuthResult = {
-      import YapixConfig._
-
-      val auth = new FormAuth
-      auth.authcation
-    }
-
-    protected override def onPostExecute(result: AuthResult) {
-      result match {
-        case AuthSuccess(pixivId, userId, authToken) => {
-          YapixConfig.yapixConfig.userId(userId)
-          YapixConfig.yapixConfig.authToken(authToken)
-
-          Toast.makeText(loginActivity, "ログインできました", Toast.LENGTH_LONG).show;
-          moveYapixActivity
-        }
-        case AuthFailure(msg, e) =>
-          Log.w(TAG, msg, e getOrElse null)
-          Toast.makeText(loginActivity, "ログインに失敗しました\n" + msg, Toast.LENGTH_LONG).show;
-      }
-
-      dismissDialog(PROGRESS_DIALOG)
-    }
   }
 }

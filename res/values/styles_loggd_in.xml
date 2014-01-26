@@ -1,0 +1,19 @@
+<resources xmlns:android="http://schemas.android.com/apk/res/android">
+
+    <style name="Yapix.LoggedIn" parent="@style/Yapix.Widget">
+        <item name="android:layout_width">match_parent</item>
+        <item name="android:layout_height">match_parent</item>
+    </style>
+
+    <style name="Yapix.LoggedIn.Text">
+        <item name="android:background">@color/textColor</item>
+        <item name="android:textColor">@color/textBackgroundColor</item>
+        <item name="android:gravity">center</item>
+        <item name="android:focusable">false</item>
+    </style>
+
+    <style name="Yapix.LoggedIn.ProgressBar" parent="@android:style/Widget.ProgressBar">
+        <item name="android:background">@drawable/qr_background</item>
+    </style>
+
+</resources>

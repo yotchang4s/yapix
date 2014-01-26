@@ -1,11 +1,11 @@
 <resources>
 
-    <style name="Yapix">
+    <style name="Yapix" />
+
+    <style name="Yapix.Widget">
         <item name="android:textAppearance">?android:textAppearanceLarge</item>
         <item name="android:textAllCaps">true</item>
-        <item name="android:textColor">@color/sticky_item_text</item>
+        <item name="android:textColor">@color/textColor</item>
     </style>
-
-    <style name="Yapix.Widget" />
 
 </resources>

@@ -2,7 +2,7 @@
 
     <attr name="illustTagStyle" format="integer|reference" />
 
-    <style name="Yapix.Illust" />
+    <style name="Yapix.Illust" parent="@style/Yapix.Widget"/>
 
     <style name="Yapix.Illust.Detail">
         <item name="android:background">#00000000</item>
@@ -11,6 +11,13 @@
     <style name="Yapix.Illust.Detail.Text">
         <item name="android:textColor">#fff</item>
         <item name="android:layout_margin">5dp</item>
+    </style>
+
+    <style name="Yapix.Illust.Detail.Item" parent="Yapix.Illust.Detail.Text">
+        <item name="android:textSize">15sp</item>
+        <item name="android:padding">10dp</item>
+        <item name="android:textColor">#000</item>
+        <item name="android:background">@drawable/text_round_corner</item>
     </style>
 
     <style name="Yapix.Illust.Detail.Tags">
@@ -32,13 +39,6 @@
 
     <style name="Yapix.Illust.Detail.SubTitle" parent="Yapix.Illust.Detail.Text">
         <item name="android:textSize">20sp</item>
-    </style>
-
-    <style name="Yapix.Illust.Detail.Item" parent="Yapix.Illust.Detail.Text">
-        <item name="android:textSize">15sp</item>
-        <item name="android:padding">10dp</item>
-        <item name="android:textColor">#000</item>
-        <item name="android:background">@drawable/illust_detail_text_round_corner</item>
     </style>
 
 </resources>
