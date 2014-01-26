@@ -5,24 +5,23 @@ import org.yotchang4s.pixiv.illust.Illust
 import android.support.v4.app.FragmentStatePagerAdapter
 import android.os.Bundle
 import android.view.KeyEvent
+import android.view.View
+import scala.collection._
+import android.util.Log
+import android.util.LruCache
 
-class IllustPagerAdapter(fm: FragmentManager) extends FragmentStatePagerAdapter(fm) {
-  private[this] var list: List[Illust] = Nil
-
-  def setList(list: List[Illust]) {
-    this.list = list
-  }
+class IllustPagerAdapter(fm: FragmentManager) extends ListFragmentStatePagerAdapter(fm) {
+  private val TAG = getClass.getSimpleName
 
   def getItem(position: Int) = {
+    Log.i(TAG, "create fragment: position=" + position)
     val illustFragment = new IllustFragment
 
     val bundle = new Bundle
-    bundle.putSerializable(ArgumentKeys.Illust, list(position))
+    bundle.putSerializable(ArgumentKeys.Illust, getIllustList(position))
 
     illustFragment.setArguments(bundle)
 
     illustFragment
   }
-
-  def getCount = list.size
 }

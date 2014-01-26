@@ -32,6 +32,7 @@
             android:name=".LoginActivity"
             android:noHistory="true" />
         <activity android:name=".YapixActivity" />
+        <activity android:name=".manga.MangaActivity" />
     </application>
 
 </manifest>

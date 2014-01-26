@@ -1,6 +1,7 @@
 <resources xmlns:android="http://schemas.android.com/apk/res/android">
 
     <style name="Yapix.Widget.QuickReturn">
+        <item name="android:background">@drawable/qr_background</item>
         <item name="android:layout_width">match_parent</item>
         <item name="android:layout_height">300dp</item>
     </style>
@@ -24,7 +25,6 @@
         <item name="android:gravity">center_vertical</item>
         <item name="android:textOn">@string/r18</item>
         <item name="android:textOff">@string/general</item>
-        <item name="android:background">@color/windowBackground</item>
         <item name="android:paddingRight">5sp</item>
     </style>
 

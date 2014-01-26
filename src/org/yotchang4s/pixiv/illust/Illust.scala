@@ -25,11 +25,13 @@ trait IllustDetail extends Illust {
   val middleImageUrl: String
   val imageUrl: String
   val tags: List[String]
-
+  val pageCount: Int
   val viewCount: Int
   val evaluationCount: Int
   val evaluation: Int
   val bookmarkCount: Int
 
   val user: User
+
+  def manga: Boolean = pageCount > 0
 }

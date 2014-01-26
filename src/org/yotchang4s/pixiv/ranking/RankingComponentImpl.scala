@@ -68,7 +68,7 @@ private[pixiv] trait RankingComponentImpl extends RankingComponent { this: Illus
         try {
           http.get(baseUrl + "&p=" + page, None, None, cookie.map(List(_)))
         } catch {
-          case e: IOException => return Left(new PixivException(IOError, Some(e)))
+          case e: IOException => return Left(new PixivException(IOError, e))
         }
       for (r <- Loan(response)) {
         try {
@@ -80,7 +80,7 @@ private[pixiv] trait RankingComponentImpl extends RankingComponent { this: Illus
 
         } catch {
           case e: PixivException => Left(e)
-          case e: IOException => Left(new HttpResponseException(response, Some(e)))
+          case e: IOException => Left(new HttpResponseException(response, e))
         }
       }
     }
@@ -97,9 +97,9 @@ private[pixiv] trait RankingComponentImpl extends RankingComponent { this: Illus
     if (content.contents == null) {
       val error = (new Gson).fromJson(body, classOf[Error])
       if (error.error == null) {
-        throw new PixivException(IOError, Some("Unknown IO Error"))
+        throw new PixivException(IOError, "Unknown IO Error")
       }
-      throw new PixivException(IOError, Some(error.error))
+      throw new PixivException(IOError, error.error)
     }
 
     import scala.collection.convert.WrapAsScala._

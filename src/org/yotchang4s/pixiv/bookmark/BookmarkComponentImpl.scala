@@ -45,7 +45,7 @@ private[pixiv] trait BookmarkComponentImpl extends BookmarkComponent { this: Ill
         try {
           http.get(bookmarkUrl + "&p=" + page, None, None, None)
         } catch {
-          case e: IOException => return Left(new PixivException(IOError, Some(e)))
+          case e: IOException => return Left(new PixivException(IOError, e))
         }
       for (r <- Loan(response)) {
         try {
@@ -56,8 +56,8 @@ private[pixiv] trait BookmarkComponentImpl extends BookmarkComponent { this: Ill
           Right(rankings)
 
         } catch {
-          case e: IOException => Left(new HttpResponseException(response, Some(e)))
-          case e: Exception => Left(new PixivException(UnknownError, Some(e)))
+          case e: IOException => Left(new HttpResponseException(response, e))
+          case e: Exception => Left(new PixivException(UnknownError, e))
         }
       }
     }

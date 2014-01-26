@@ -14,7 +14,7 @@ object FormAuth {
   private val idPattern = Pattern.compile("^([0-9]+)_[a-zA-Z0-9]+$")
 }
 
-case class FormAuth extends AbstractResourceDelegator {
+case class FormAuth {
 
   import FormAuth._
 
@@ -73,9 +73,9 @@ case class FormAuth extends AbstractResourceDelegator {
       }
     } catch {
       case e: IOException => AuthFailure("IO Error",
-        Some(new PixivException(PixivException.IOError, Some(e))))
+        Some(new PixivException(PixivException.IOError, e)))
       case e: Exception => AuthFailure("Unknown Error",
-        Some(new PixivException(PixivException.UnknownError, Some(e))))
+        Some(new PixivException(PixivException.UnknownError, e)))
     }
   }
 }

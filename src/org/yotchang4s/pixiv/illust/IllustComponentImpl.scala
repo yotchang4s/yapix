@@ -43,8 +43,8 @@ private[pixiv] trait IllustComponentImpl extends IllustComponent {
 
         Right(illustDetail)
       } catch {
-        case e: IOException => throw new PixivException(IOError, Some(e))
-        case e: Exception => throw new PixivException(UnknownError, Some(e))
+        case e: IOException => throw new PixivException(IOError, e)
+        case e: Exception => throw new PixivException(UnknownError, e)
       }
     }
   }
@@ -61,28 +61,31 @@ private[pixiv] class IllustImpl(@transient val illust: IllustComponent,
   private[this] var illustDetail: Option[IllustDetail] = None
 
   def detail(implicit config: Config) = {
-    illustDetail match {
-      case Some(i) => Right(i)
-      case None =>
-        illustRepository.findIllustDetailBy(identity)(config) match {
-          case Right(i) =>
-            illustDetail = Some(i)
-            Right(i)
-          case Left(e) => Left(e)
-        }
+    synchronized {
+      illustDetail match {
+        case Some(i) => Right(i)
+        case None =>
+          illustRepository.findIllustDetailBy(identity)(config) match {
+            case Right(i) =>
+              illustDetail = Some(i)
+              Right(i)
+            case Left(e) => Left(e)
+          }
+      }
     }
   }
 
   override def toString = identity.value
 }
 
-private[this] class IllustDetailImpl(
+private[pixiv] class IllustDetailImpl(
   val illust: Illust,
   val caption: String,
   val postedDateTime: Date,
   val middleImageUrl: String,
   val imageUrl: String,
   val tags: List[String],
+  val pageCount: Int,
   val viewCount: Int,
   val evaluationCount: Int,
   val evaluation: Int,

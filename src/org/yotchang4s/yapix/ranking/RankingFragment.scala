@@ -14,7 +14,6 @@ import org.yotchang4s.pixiv.illust._
 import org.yotchang4s.pixiv.ranking._
 import org.yotchang4s.yapix.YapixConfig._
 import org.yotchang4s.yapix._
-import android.app.Activity
 import android.support.v4.app.FragmentManager.OnBackStackChangedListener
 
 trait RankingFragment extends QuickReturnGridViewFragment {
@@ -39,6 +38,8 @@ trait RankingFragment extends QuickReturnGridViewFragment {
   private[this] var gridViewPosition = 0
   private[this] var gridViewTop = 0
 
+  private[this] var illustViewPagerFragment: IllustViewPagerFragment = null
+
   setRetainInstance(true)
 
   override protected def onCreateView(inflater: LayoutInflater, container: ViewGroup,
@@ -62,15 +63,15 @@ trait RankingFragment extends QuickReturnGridViewFragment {
     gridView.onItemClicks += { (parent, view, position, id) =>
       val tran = getChildFragmentManager.beginTransaction
 
-      val fragment = new IllustViewPagerFragment
+      illustViewPagerFragment = new IllustViewPagerFragment
 
       val bundle = new Bundle
       bundle.putSerializable(ArgumentKeys.IllustList, rankings.toArray)
       bundle.putInt(ArgumentKeys.IllustListPosition, position)
 
-      fragment.setArguments(bundle)
+      illustViewPagerFragment.setArguments(bundle)
 
-      tran.add(R.id.rankingContent, fragment, "YHAAAAAA")
+      tran.add(R.id.rankingContent, illustViewPagerFragment)
       tran.addToBackStack(null)
       tran.commit
     }
@@ -125,10 +126,18 @@ trait RankingFragment extends QuickReturnGridViewFragment {
   }
 
   override def onBackPressed = {
-    if (getChildFragmentManager.getBackStackEntryCount() > 0) {
-      getChildFragmentManager.popBackStack
-      true
-    } else false
+    val noStack = {
+      var s = false
+      if (illustViewPagerFragment != null) {
+        s = illustViewPagerFragment.onBackPressed
+      }
+      if (!s && getChildFragmentManager.getBackStackEntryCount() > 0) {
+        getChildFragmentManager.popBackStack
+        s = true
+      }
+      s
+    }
+    noStack
   }
 
   private def createRankingLabels(rankingCategory: RankingCategory): List[RankingLabel] = {
