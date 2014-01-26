@@ -8,6 +8,7 @@
         android:layout_height="wrap_content"
         android:orientation="vertical" >
 
+        <!--
         <TextView
             android:id="@+id/menuDrawerTimeline"
             style="@style/MenuDrawer.Widget.Title"
@@ -15,7 +16,8 @@
             android:layout_height="wrap_content"
             android:drawableLeft="@drawable/ic_menu_home"
             android:text="@string/timeline" />
-
+        -->
+        <!--
         <TextView
             android:id="@+id/menuDrawerSearch"
             style="@style/MenuDrawer.Widget.Title"
@@ -23,6 +25,7 @@
             android:layout_height="wrap_content"
             android:drawableLeft="@android:drawable/ic_menu_search"
             android:text="@string/search" />
+        -->
 
         <TextView
             android:id="@+id/menuDrawerBookmark"
@@ -31,7 +34,7 @@
             android:layout_height="wrap_content"
             android:drawableLeft="@android:drawable/star_big_on"
             android:text="@string/bookmark" />
-
+        <!--
         <TextView
             android:id="@+id/menuDrawerProfile"
             style="@style/MenuDrawer.Widget.Title"
@@ -39,6 +42,7 @@
             android:layout_height="wrap_content"
             android:drawableLeft="@android:drawable/ic_menu_myplaces"
             android:text="@string/profile" />
+        -->
 
         <TextView
             style="@style/MenuDrawer.Widget.Category"
@@ -69,7 +73,7 @@
             android:layout_height="wrap_content"
             android:drawableLeft="@android:drawable/ic_menu_gallery"
             android:text="@string/manga" />
-
+        <!--
         <TextView
             android:id="@+id/menuDrawerRankingNovel"
             style="@style/MenuDrawer.Widget.Title"
@@ -77,6 +81,7 @@
             android:layout_height="wrap_content"
             android:drawableLeft="@android:drawable/ic_menu_agenda"
             android:text="@string/novel" />
+        -->
     </LinearLayout>
 
 </ScrollView>

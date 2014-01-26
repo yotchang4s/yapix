@@ -31,19 +31,19 @@ class YapixActivity extends FragmentActivity {
     menuDrawer.setSlideDrawable(R.drawable.ic_drawer);
     //menuDrawer.peekDrawer
 
-    findViewById(R.id.menuDrawerTimeline).onClicks += { v =>
+    /*findViewById(R.id.menuDrawerTimeline).onClicks += { v =>
       menuDrawerActiveViewChange(v)
-    }
-    findViewById(R.id.menuDrawerSearch).onClicks += { v =>
+    }*/
+    /*findViewById(R.id.menuDrawerSearch).onClicks += { v =>
       menuDrawerActiveViewChange(v)
-    }
+    }*/
     findViewById(R.id.menuDrawerBookmark).onClicks += { v =>
       changeFragment(classOf[BookmarkFragment])
       menuDrawerActiveViewChange(v)
     }
-    findViewById(R.id.menuDrawerProfile).onClicks += { v =>
+    /*findViewById(R.id.menuDrawerProfile).onClicks += { v =>
       menuDrawerActiveViewChange(v)
-    }
+    }*/
 
     findViewById(R.id.menuDrawerRankingOverall).onClicks += { v =>
       changeFragment(classOf[OverallRankingFragment])
@@ -57,10 +57,10 @@ class YapixActivity extends FragmentActivity {
       changeFragment(classOf[MangaRankingFragment])
       menuDrawerActiveViewChange(v)
     }
-    findViewById(R.id.menuDrawerRankingNovel).onClicks += { v =>
+    /*findViewById(R.id.menuDrawerRankingNovel).onClicks += { v =>
       changeFragment(classOf[NovelRankingFragment])
       menuDrawerActiveViewChange(v)
-    }
+    }*/
 
     changeFragment(classOf[OverallRankingFragment])
     menuDrawerActiveViewChange(findViewById(R.id.menuDrawerRankingOverall))

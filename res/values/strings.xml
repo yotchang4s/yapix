@@ -11,7 +11,7 @@
         <item>オリジナル</item>
         <item>男子に人気</item>
         <item>女子に人気</item>
-        <item>過去ランキング</item>
+        <!-- <item>過去ランキング</item> -->
     </string-array>
     <string-array name="ranking_type_illust">
         <item>デイリー</item>
@@ -20,7 +20,7 @@
         <item>ルーキー</item>
         <item>男子に人気(R18)</item>
         <item>女子に人気(R18)</item>
-        <item>過去ランキング</item>
+        <!-- <item>過去ランキング</item> -->
     </string-array>
     <string-array name="ranking_type_manga">
         <item>デイリー</item>
@@ -29,13 +29,13 @@
         <item>ルーキー</item>
         <item>男子に人気(R18)</item>
         <item>女子に人気(R18)</item>
-        <item>過去ランキング</item>
+        <!-- <item>過去ランキング</item> -->
     </string-array>
     <string-array name="ranking_type_novel">
         <item>デイリー</item>
         <item>ウィークリー</item>
         <item>ルーキー</item>
-        <item>過去ランキング</item>
+        <!-- <item>過去ランキング</item> -->
     </string-array>
 
     <string name="userName">ユーザー名</string>
