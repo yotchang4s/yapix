@@ -1,25 +1,20 @@
 package org.yotchang4s.pixiv.bookmark
 
-import org.yotchang4s.pixiv.Config
-import org.yotchang4s.pixiv.illust.Illust
-import org.yotchang4s.pixiv.PixivException
-import org.yotchang4s.pixiv.PixivException._
-import org.yotchang4s.pixiv.http._
-import org.yotchang4s.pixiv.bookmark.BookmarkComponent._
-import org.jsoup.Jsoup
-import org.yotchang4s.pixiv.illust.IllustId
+import java.io.BufferedReader
 import java.io.IOException
+import java.io.Reader
+
+import scala.collection._
+import org.jsoup.Jsoup
+import org.jsoup.select.Elements
+import org.jsoup.nodes.Element
 import org.yotchang4s.scala.Loan
 import org.yotchang4s.scala.Loan._
-import org.jsoup.nodes.Element
-import scala.collection.mutable.ListBuffer
-import org.yotchang4s.pixiv.illust.IllustComponent
-import org.jsoup.select.Elements
-import java.io.BufferedReader
-import java.io.Reader
-import au.com.bytecode.opencsv.CSVParser
-import org.yotchang4s.pixiv.illust.IllustDetail
-import org.yotchang4s.pixiv.illust.IllustDetailCsvParser
+import org.yotchang4s.pixiv._
+import org.yotchang4s.pixiv.http._
+import org.yotchang4s.pixiv.illust._
+import org.yotchang4s.pixiv.PixivException._
+import BookmarkComponent._
 
 private[pixiv] trait BookmarkComponentImpl extends BookmarkComponent { this: IllustComponent =>
   val bookmark: BookmarkRepository
@@ -64,9 +59,10 @@ private[pixiv] trait BookmarkComponentImpl extends BookmarkComponent { this: Ill
   }
 
   private def toBookmarkIllusts(reader: Reader): List[IllustDetail] = {
-    val r = new BufferedReader(reader)
-    Stream.continually(r.readLine).takeWhile(null !=).map { l =>
-      IllustDetailCsvParser.parse(l)
-    }.toList
+    for (r <- Loan(new BufferedReader(reader))) {
+      Stream.continually(r.readLine).takeWhile(null !=).map { l =>
+        IllustDetailCsvParser.parse(l)
+      }.toList
+    }
   }
 }
