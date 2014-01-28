@@ -1,9 +1,8 @@
 package org.yotchang4s.yapix
 
 import java.text.SimpleDateFormat
-
 import scala.concurrent.ExecutionContext.Implicits.global
-
+import android.app.Activity
 import android.graphics._
 import android.os.Bundle
 import android.util.Log
@@ -11,22 +10,17 @@ import android.view._
 import android.widget._
 import android.content.Intent
 import android.webkit.WebView
-
 import com.android.volley.VolleyError
-
 import org.yotchang4s.scala.FutureUtil._
 import org.yotchang4s.android._
 import org.yotchang4s.android.Listeners._
 import org.yotchang4s.android.ToastMaster
 import org.yotchang4s.android.UIExecutionContext
-
 import org.yotchang4s.pixiv.illust._
 import org.yotchang4s.pixiv.PixivException
 import org.yotchang4s.pixiv.PixivException.IOError
-
 import org.yotchang4s.yapix.volley.ImageListenerJava
 import org.yotchang4s.yapix.volley.ImageContainerJava
-
 import org.yotchang4s.yapix.manga.MangaActivity
 import org.yotchang4s.yapix.YapixConfig.yapixConfig
 
@@ -46,6 +40,8 @@ class IllustFragment extends AbstractFragment { self =>
 
   private[this] var childFragment: AbstractFragment = null
 
+  private[this] var activity: Option[Activity] = None
+
   protected override def onCreate(savedInstanceState: Bundle) {
     super.onCreate(savedInstanceState)
 
@@ -62,22 +58,33 @@ class IllustFragment extends AbstractFragment { self =>
     netWorkImageView.onClicks += { _ =>
       illust match {
         case d: IllustDetail if (d.manga) =>
-          val tran = getChildFragmentManager.beginTransaction
+          for (activity <- this.activity) {
+            val tran = getChildFragmentManager.beginTransaction
 
-          val intent = new Intent
-          val clazz = classOf[MangaActivity]
-          intent.setClass(getActivity.getApplicationContext, clazz)
-          intent.putExtra(ArgumentKeys.IllustDetail, illust)
+            val intent = new Intent
+            val clazz = classOf[MangaActivity]
+            intent.setClass(activity.getApplicationContext, clazz)
+            intent.putExtra(ArgumentKeys.IllustDetail, illust)
 
-          Log.i(TAG, "start activity :" + clazz.getName)
+            Log.i(TAG, "start activity :" + clazz.getName)
 
-          startActivity(intent)
-
+            startActivity(intent)
+          }
         case d: IllustDetail =>
         case i =>
       }
     }
     viewGroup
+  }
+
+  override def onAttach(activity: Activity) {
+    super.onAttach(activity)
+    this.activity = Option(activity)
+  }
+
+  override def onDetach {
+    super.onDetach
+    this.activity = None
   }
 
   override protected def onActivityCreated(savedInstanceState: Bundle) {
@@ -102,32 +109,7 @@ class IllustFragment extends AbstractFragment { self =>
 
     future.onSuccess {
       case Right(d) =>
-        this.illust = d
-        illustDetailProgressBar.setVisibility(View.GONE)
-
-        if (!d.caption.isEmpty) {
-          findViewById[WebView](R.id.illustCaption)
-            .loadData(d.caption, "text/html; charset=UTF-8", "UTF8")
-        } else {
-          findViewById[View](R.id.illustCaptionContainer).setVisibility(View.GONE)
-        }
-        findViewById[TextView](R.id.illustAuthor).setText(d.user.name)
-        findViewById[TextView](R.id.illustPostedDateTime)
-          .setText(postDateTimeFormat.format(d.postedDateTime))
-
-        val tagContainer = findViewById[ViewGroup](R.id.illustTags)
-        d.tags.foreach { t =>
-          val tagTextView = new TextView(getActivity, null, R.attr.illustTagStyle)
-          tagTextView.setText(t)
-          tagContainer.addView(tagTextView)
-        }
-
-        findViewById[TextView](R.id.illustViewCount).setText(d.viewCount.toString)
-        findViewById[TextView](R.id.illustEvaluationCount).setText(d.evaluationCount.toString)
-        findViewById[TextView](R.id.illustEvaluation).setText(d.evaluation.toString)
-
-        illustDetailView.setVisibility(View.VISIBLE)
-        setImageUrl(d.middleImageUrl)
+        setIllustDetail(d)
       case Left(e) =>
         illustDetailProgressBar.setVisibility(View.GONE)
         error(TAG, e)
@@ -135,17 +117,59 @@ class IllustFragment extends AbstractFragment { self =>
     }(new UIExecutionContext)
   }
 
+  private def setIllustDetail(d: IllustDetail) {
+    this.illust = d
+
+    illustDetailProgressBar.setVisibility(View.GONE)
+
+    val activity = this.activity match {
+      case Some(a) => a
+      case None => return
+    }
+
+    if (!d.caption.isEmpty) {
+      findViewById[WebView](R.id.illustCaption)
+        .loadData(d.caption, "text/html; charset=UTF-8", "UTF8")
+    } else {
+      findViewById[View](R.id.illustCaptionContainer).setVisibility(View.GONE)
+    }
+    findViewById[TextView](R.id.illustAuthor).setText(d.user.name)
+    findViewById[TextView](R.id.illustPostedDateTime)
+      .setText(postDateTimeFormat.format(d.postedDateTime))
+
+    val tagContainer = findViewById[ViewGroup](R.id.illustTags)
+    d.tags.foreach { t =>
+      val tagTextView = new TextView(activity, null, R.attr.illustTagStyle)
+      tagTextView.setText(t)
+      tagContainer.addView(tagTextView)
+    }
+
+    findViewById[TextView](R.id.illustViewCount).setText(d.viewCount.toString)
+    findViewById[TextView](R.id.illustEvaluationCount).setText(d.evaluationCount.toString)
+    findViewById[TextView](R.id.illustEvaluation).setText(d.evaluation.toString)
+
+    illustDetailView.setVisibility(View.VISIBLE)
+    setImageUrl(d.middleImageUrl)
+  }
+
   private def setImageBitmap(bitmap: Bitmap) {
+
     if (bitmap == null) {
       return
     }
+
+    val activity = this.activity match {
+      case Some(a) => a
+      case None => return
+    }
+
     val srcWidth = bitmap.getWidth
     val srcHeight = bitmap.getHeight
 
-    val (screenWidth, screenHeight) = getScreenSize(getActivity)
+    val (screenWidth, screenHeight) = getScreenSize(activity)
 
     val drawWidth = screenWidth.toFloat
-    val drawHeight = (screenHeight - getStatusBarSize(getActivity) - getActionBarSize(getActivity)).toFloat
+    val drawHeight = (screenHeight - getStatusBarSize(activity) - getActionBarSize(getActivity)).toFloat
 
     val widthScale = drawWidth / srcWidth;
     val heightScale = drawHeight / srcHeight;
@@ -182,7 +206,7 @@ class IllustFragment extends AbstractFragment { self =>
     ImageCacheManager.imageLoader.foreach {
       _.get(url, new ImageListenerJava {
         def onResponse(response: ImageContainerJava, isImmediate: Boolean) {
-          setImageBitmap(response.getBitmap())
+          setImageBitmap(response.getBitmap)
         }
 
         def onErrorResponse(e: VolleyError) {
