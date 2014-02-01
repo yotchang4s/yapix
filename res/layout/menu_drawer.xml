@@ -17,7 +17,7 @@
             android:drawableLeft="@drawable/ic_menu_home"
             android:text="@string/timeline" />
         -->
-        <!--
+
         <TextView
             android:id="@+id/menuDrawerSearch"
             style="@style/MenuDrawer.Widget.Title"
@@ -25,7 +25,6 @@
             android:layout_height="wrap_content"
             android:drawableLeft="@android:drawable/ic_menu_search"
             android:text="@string/search" />
-        -->
 
         <TextView
             android:id="@+id/menuDrawerBookmark"

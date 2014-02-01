@@ -4,32 +4,22 @@ import scala.concurrent._
 import scala.concurrent.ExecutionContext.Implicits.global
 import android.app._
 import android.os.Bundle
-import android.util.Log
 import android.view._
-import android.widget.Toast
-import android.support.v4.app.DialogFragment
-import org.yotchang4s.android.UIExecutionContext
-import org.yotchang4s.pixiv.auth._
-import org.yotchang4s.yapix.YapixConfig.yapixConfig
-import org.yotchang4s.android.ToastMaster
 import android.content.DialogInterface
-import org.yotchang4s.yapix.R
-import org.yotchang4s.yapix.YapixConfig
+import android.util.Log
 
-object LoggedInDialogFragment {
-  trait LoginResult
-  case object Ok extends LoginResult
-  case object Ng extends LoginResult
-}
+import android.support.v4.app.DialogFragment
+
+import org.yotchang4s.android._
+import org.yotchang4s.pixiv.auth._
+import org.yotchang4s.yapix._
+import org.yotchang4s.yapix.YapixConfig._
 
 class LoggedInDialogFragment extends DialogFragment {
-  import LoggedInDialogFragment._
 
   private val TAG = getClass.getSimpleName
 
-  private[this] var _onReturn: Option[(LoginResult => Unit)] = None
-
-  private[this] var loginCancel: Boolean = false
+  private[this] var onReturn: Option[(AuthResult => Unit)] = None
 
   override def onCreateView(inflater: LayoutInflater, container: ViewGroup, savedInstanceState: Bundle): View = {
     val content = inflater.inflate(R.layout.logged_in_fragment, null)
@@ -50,10 +40,6 @@ class LoggedInDialogFragment extends DialogFragment {
     dialog
   }
 
-  override def onCancel(dialog: DialogInterface) {
-    this.loginCancel = true
-  }
-
   private def asyncLogin {
     val f = future {
       val auth = new FormAuth
@@ -61,27 +47,19 @@ class LoggedInDialogFragment extends DialogFragment {
     }
 
     f.onSuccess {
-      case AuthSuccess(pixivId, userId, authToken) => {
-        if (!loginCancel) {
-          YapixConfig.yapixConfig.userId(userId)
-          YapixConfig.yapixConfig.authToken(authToken)
+      case s: AuthSuccess =>
+        onReturn.foreach(_(s))
 
-          ToastMaster.makeText(getActivity, "ログインできました", Toast.LENGTH_SHORT).show
+      case f: AuthFailure =>
+        Log.w(TAG, f.cause getOrElse null)
 
-          _onReturn.foreach(_(Ok))
-        }
-      }
-      case AuthFailure(msg, e) =>
-        Log.w(TAG, msg, e getOrElse null)
-
-        ToastMaster.makeText(getActivity, "ログインに失敗しました\n" + msg, Toast.LENGTH_SHORT).show
-
-        _onReturn.foreach(_(Ng))
+        onReturn.foreach(_(f))
         dismiss
+
     }(new UIExecutionContext)
   }
 
-  def onReturn(onReturn: (LoginResult => Unit)) {
-    _onReturn = Option(onReturn)
+  def onReturn(onReturn: (AuthResult => Unit)) {
+    this.onReturn = Option(onReturn)
   }
 }

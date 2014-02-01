@@ -1,4 +1,4 @@
-<resources>
+<resources xmlns:android="http://schemas.android.com/apk/res/android">
 
     <style name="Yapix" />
 
@@ -6,6 +6,29 @@
         <item name="android:textAppearance">?android:textAppearanceLarge</item>
         <item name="android:textAllCaps">true</item>
         <item name="android:textColor">@color/textColor</item>
+    </style>
+
+    <style name="Yapix.Widget.EditText">
+        <item name="android:textColor">@color/windowBackground</item>
+        <item name="android:background">@color/textColor</item>
+        <item name="android:padding">5dp</item>
+    </style>
+
+    <style name="Yapix.Widget.TextView">
+        <item name="android:textAppearance">?android:textAppearanceLarge</item>
+        <item name="android:textAllCaps">true</item>
+        <item name="android:textColor">@color/textColor</item>
+        <item name="android:padding">5dp</item>
+    </style>
+
+    <style name="Yapix.Widget.TextView.Reverse">
+        <item name="android:background">@color/textColor</item>
+        <item name="android:textColor">@color/windowBackground</item>
+    </style>
+
+    <style name="Yapix.Widget.Button">
+        <item name="android:textColor">@color/textBackgroundColor</item>
+        <item name="android:background">@drawable/button_round_corner</item>
     </style>
 
 </resources>

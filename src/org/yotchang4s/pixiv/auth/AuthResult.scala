@@ -9,7 +9,12 @@ sealed trait AuthResult {
   final def isFailure: Boolean = !isSuccess
 }
 
-case class AuthSuccess(pixivId: String, userId: String, authToken: String) extends AuthResult {
+case class AuthSuccess(
+  pixivId: String,
+  userId: String,
+  pivixPassword: String,
+  authToken: String) extends AuthResult {
+
   def isSuccess = true
 }
 

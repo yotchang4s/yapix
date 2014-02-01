@@ -1,31 +1,24 @@
 package org.yotchang4s.yapix.login
 
-import android.animation._
-import android.content.Intent
 import android.os.Bundle
-import android.preference.PreferenceManager
-import android.text._
-import android.util.Log
-import android.view._
-import android.view.inputmethod.EditorInfo
+import android.content.Intent
 import android.widget._
+
+import android.support.v4.app.FragmentActivity
+
 import org.yotchang4s.android._
 import org.yotchang4s.android.Listeners._
-import org.yotchang4s.pixiv._
-import org.yotchang4s.pixiv.auth._
-import android.support.v4.app.FragmentActivity
-import android.app.ProgressDialog
-import android.app.Dialog
-import org.yotchang4s.yapix.YapixActivity
+import org.yotchang4s.yapix._
 import org.yotchang4s.yapix.YapixConfig
-import org.yotchang4s.yapix.R
+import org.yotchang4s.pixiv.auth._
 
 class LoginActivity extends FragmentActivity { loginActivity =>
   private[this] val TAG = getClass.getName
 
   private[this] val PROGRESS_DIALOG = 1
 
-  private[this] var progressDialog: ProgressDialog = null
+  private[this] var pixivId: Option[String] = None
+  private[this] var pixivPassword: Option[String] = None
 
   protected override def onCreate(savedInstanceState: Bundle) {
     super.onCreate(savedInstanceState)
@@ -37,14 +30,16 @@ class LoginActivity extends FragmentActivity { loginActivity =>
     val loginButton = findViewById(R.id.login_button)
 
     for {
-      id <- YapixConfig.yapixConfig.pixivId
-      ps <- YapixConfig.yapixConfig.pixivPassword
+      id <- pixivId
+      ps <- pixivPassword
     } {
       loginPixivIdEditText.setText(id)
       loginPixivPasswordEditText.setText(ps)
 
       checkFieldsForEmptyValues
       authcation
+
+      return
     }
 
     loginPixivIdEditText.afterTextChanged { _ =>
@@ -55,6 +50,12 @@ class LoginActivity extends FragmentActivity { loginActivity =>
       checkFieldsForEmptyValues
     }
 
+    checkFieldsForEmptyValues
+
+    loginButton.onClicks += { _ =>
+      authcation
+    }
+
     def checkFieldsForEmptyValues {
       val pixivId = loginPixivIdEditText.getText.toString;
       val pixivPassword = loginPixivPasswordEditText.getText.toString;
@@ -63,25 +64,27 @@ class LoginActivity extends FragmentActivity { loginActivity =>
         loginButton.setEnabled(false);
       } else {
         loginButton.setEnabled(true);
-        YapixConfig.yapixConfig.pixivId(pixivId)
-        YapixConfig.yapixConfig.pixivPassword(pixivPassword)
-      }
-    }
 
-    loginButton.onClicks += { _ =>
-      authcation
+      }
     }
   }
 
   private def authcation {
-    import LoggedInDialogFragment._
 
     val dialog = new LoggedInDialogFragment
     dialog.onReturn { r =>
       r match {
-        case Ok =>
+        case s: AuthSuccess =>
+          YapixConfig.yapixConfig.pixivId(s.pixivId)
+          YapixConfig.yapixConfig.pixivPassword(s.pivixPassword)
+
+          ToastMaster.makeText(this, getString(R.string.loggedSuccess), Toast.LENGTH_SHORT).show
+
           moveYapixActivity
-        case Ng =>
+
+        case f: AuthFailure =>
+
+          ToastMaster.makeText(this, getString(R.string.loggedFailure) + "\n" + f.reasonMessage, Toast.LENGTH_SHORT).show
       }
     }
     dialog.show(getSupportFragmentManager, "Login")

@@ -60,5 +60,11 @@
     <string name="comment">コメント</string>
     <string name="login">ログイン</string>
     <string name="loggedIn">ログイン中</string>
+    <string name="searchHistory">検索履歴</string>
+    <string name="searchTag">タグ検索</string>
+    <string name="searchCaption">キャプション検索</string>
+    <string name="searchUser">ユーザ検索</string>
+    <string name="loggedSuccess">ログインしました</string>
+    <string name="loggedFailure">ログインに失敗しました</string>
 
 </resources>

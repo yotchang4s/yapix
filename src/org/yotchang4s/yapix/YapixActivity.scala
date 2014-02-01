@@ -11,6 +11,7 @@ import org.yotchang4s.pixiv.ranking._
 import org.yotchang4s.yapix.ranking._
 import android.support.v4.app._
 import android.util.Log
+import org.yotchang4s.yapix.search.SearchFragment
 
 class YapixActivity extends FragmentActivity {
   private[this] val TAG = getClass.getName
@@ -34,9 +35,10 @@ class YapixActivity extends FragmentActivity {
     /*findViewById(R.id.menuDrawerTimeline).onClicks += { v =>
       menuDrawerActiveViewChange(v)
     }*/
-    /*findViewById(R.id.menuDrawerSearch).onClicks += { v =>
+    findViewById(R.id.menuDrawerSearch).onClicks += { v =>
+      changeFragment(classOf[SearchFragment])
       menuDrawerActiveViewChange(v)
-    }*/
+    }
     findViewById(R.id.menuDrawerBookmark).onClicks += { v =>
       changeFragment(classOf[BookmarkFragment])
       menuDrawerActiveViewChange(v)

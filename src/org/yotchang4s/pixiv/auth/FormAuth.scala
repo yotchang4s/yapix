@@ -66,7 +66,7 @@ case class FormAuth {
               matcher.group(1)
             }
 
-            AuthSuccess(pixivId, userId, sessionCookieValue)
+            AuthSuccess(pixivId, userId, pixivPassword, sessionCookieValue)
 
           case None => AuthFailure("Login PHPSESSID is not found")
         }

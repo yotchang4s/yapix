@@ -7,5 +7,7 @@
     <color name="textColor">#fff</color>
     <color name="stickyItemText">#09c</color>
     <color name="actionbarBackground">#09c</color>
+    <color name="pressedBackground">#069</color>
+    <color name="disableBackground">#a9a9a9</color>
 
 </resources>
