@@ -18,19 +18,15 @@
         android:supportsRtl="true"
         android:theme="@style/YapixTheme" >
         <activity
-            android:name=".MainActivity"
+            android:name=".login.LoginActivity"
             android:label="@string/app_name"
-            android:launchMode="singleTop"
-            android:noHistory="true" >
+            android:launchMode="singleTop">
             <intent-filter>
                 <action android:name="android.intent.action.MAIN" />
 
                 <category android:name="android.intent.category.LAUNCHER" />
             </intent-filter>
         </activity>
-        <activity
-            android:name=".login.LoginActivity"
-            android:noHistory="true" />
         <activity android:name=".YapixActivity" />
         <activity android:name=".manga.MangaActivity" />
     </application>

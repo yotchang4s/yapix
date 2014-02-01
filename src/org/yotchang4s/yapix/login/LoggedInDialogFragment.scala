@@ -35,15 +35,18 @@ class LoggedInDialogFragment extends DialogFragment {
     window.requestFeature(Window.FEATURE_NO_TITLE)
     window.setFlags(WindowManager.LayoutParams.FLAG_FULLSCREEN, WindowManager.LayoutParams.FLAG_LAYOUT_IN_SCREEN);
 
-    asyncLogin
+    val pixivId = getArguments.getString(ArgumentKeys.PixivId)
+    val pixivPassword = getArguments.getString(ArgumentKeys.PixivPassword)
+
+    asyncLogin(pixivId, pixivPassword)
 
     dialog
   }
 
-  private def asyncLogin {
+  private def asyncLogin(pixivId: String, pixivPassword: String) {
     val f = future {
       val auth = new FormAuth
-      auth.authcation
+      auth.authcation(pixivId, pixivPassword)
     }
 
     f.onSuccess {

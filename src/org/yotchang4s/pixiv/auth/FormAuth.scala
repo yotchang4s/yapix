@@ -18,25 +18,7 @@ case class FormAuth {
 
   import FormAuth._
 
-  def authcation(implicit config: Config): AuthResult = {
-    /*val pixivId = config.pixivId match {
-      case Some(x) => x
-      case None => return AuthFailure("Pixiv id is none")
-    }
-    val pixivPassword = config.pixivPassword match {
-      case Some(x) => x
-      case None => return AuthFailure("Pixiv password is none")
-    }*/
-
-    val pixivId = config.pixivId match {
-      case Some(i) => i
-      case None => return AuthFailure("Pixiv id is None")
-    }
-
-    val pixivPassword = config.pixivPassword match {
-      case Some(i) => i
-      case None => return AuthFailure("Pixiv password is None")
-    }
+  def authcation(pixivId: String, pixivPassword: String)(implicit config: Config): AuthResult = {
 
     val params: List[HttpRequestParameter] = List(
       "mode" -> "login",

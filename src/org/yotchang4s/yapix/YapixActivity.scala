@@ -123,7 +123,7 @@ class YapixActivity extends FragmentActivity {
       }
     }
     if (callSuper) {
-      super.onBackPressed
+      moveTaskToBack(true)
     }
   }
 }
