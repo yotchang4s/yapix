@@ -79,6 +79,7 @@ class LoginActivity extends FragmentActivity {
         case s: AuthSuccess =>
           YapixConfig.yapixConfig.pixivId(s.pixivId)
           YapixConfig.yapixConfig.pixivPassword(s.pivixPassword)
+          YapixConfig.yapixConfig.authToken(s.authToken)
 
           ToastMaster.makeText(this, getString(R.string.loggedSuccess), Toast.LENGTH_SHORT).show
 
