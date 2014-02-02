@@ -1,27 +1,22 @@
 <resources xmlns:android="http://schemas.android.com/apk/res/android">
 
     <style name="Yapix.QuickReturn">
-        <item name="android:background">@drawable/qr_background</item>
-        <item name="android:layout_width">match_parent</item>
-        <item name="android:layout_height">300dp</item>
+        <item name="android:background">@color/textColor</item>
     </style>
 
-    <style name="Yapix.QuickReturn.Sticky">
-        <item name="android:layout_height">50dp</item>
-        <item name="android:gravity">center_vertical</item>
-        <item name="android:focusable">false</item>
-    </style>
+    <style name="Yapix.QuickReturn.Sticky" />
 
-    <style name="Yapix.QuickReturn.Sticky.Text">
-        <item name="android:textColor">@color/stickyItemText</item>
+    <style name="Yapix.QuickReturn.Sticky.Spinner">
         <item name="android:paddingLeft">30sp</item>
-        <item name="android:layout_width">0dp</item>
-        <item name="android:layout_weight">1</item>
+    </style>
+
+    <style name="Yapix.QuickReturn.Sticky.Text" parent="Yapix.Widget.TextView.Reverse">
+        <item name="android:gravity">center_vertical</item>
+        <item name="android:paddingLeft">30sp</item>
     </style>
 
     <style name="Yapix.QuickReturn.Sticky.Switch">
-        <item name="android:layout_width">wrap_content</item>
-        <item name="android:layout_height">match_parent</item>
+        <item name="android:focusable">false</item>
         <item name="android:checked">false</item>
         <item name="android:gravity">center_vertical</item>
         <item name="android:textOn">@string/r18</item>

@@ -7,10 +7,15 @@
 
     <TextView
         android:id="@+id/rankingTypeSpinnterDropDownText"
-        style="@style/Yapix.QuickReturn.Sticky.Text" />
+        style="@style/Yapix.QuickReturn.Sticky.Text"
+        android:layout_width="0dp"
+        android:layout_height="50dp"
+        android:layout_weight="1" />
 
     <Switch
         android:id="@+id/rankingTypeSpinnterDropDownR18Switch"
-        style="@style/Yapix.QuickReturn.Sticky.Switch" />
+        style="@style/Yapix.QuickReturn.Sticky.Switch"
+        android:layout_width="wrap_content"
+        android:layout_height="match_parent" />
 
 </LinearLayout>

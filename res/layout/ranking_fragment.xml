@@ -12,6 +12,8 @@
 
     <Spinner
         android:id="@+id/rankingQuickReturnSticky"
-        style="@style/Yapix.QuickReturn.Sticky" />
+        style="@style/Yapix.QuickReturn.Sticky.Spinner"
+        android:layout_width="match_parent"
+        android:layout_height="50dp" />
 
 </FrameLayout>
