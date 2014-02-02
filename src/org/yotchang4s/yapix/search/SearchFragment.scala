@@ -16,8 +16,6 @@ object SearchFragment {
 class SearchFragment extends AbstractFragment {
   private val TAG = getClass.getSimpleName
 
-  private[this] var searchResultFragment: SearchResultFragment = null
-
   override protected def onCreateView(inflater: LayoutInflater, container: ViewGroup, savedInstanceState: Bundle): View = {
     val viewGroup = inflater.inflate(R.layout.search, container, false).asInstanceOf[ViewGroup]
 
@@ -28,7 +26,8 @@ class SearchFragment extends AbstractFragment {
     tagButton.onClicks += { v =>
       val tran = getChildFragmentManager.beginTransaction
 
-      searchResultFragment = new SearchResultFragment
+      val searchResultFragment = new SearchResultFragment
+      childFragment(searchResultFragment)
 
       val bundle = new Bundle
       bundle.putSerializable(ArgumentKeys.SearchType, SearchFragment.Tag)
@@ -41,21 +40,6 @@ class SearchFragment extends AbstractFragment {
       tran.commit
     }
     viewGroup
-  }
-
-  override def onBackPressed = {
-    val noStack = {
-      var s = false
-      if (searchResultFragment != null) {
-        s = searchResultFragment.onBackPressed
-      }
-      if (!s && getChildFragmentManager.getBackStackEntryCount() > 0) {
-        getChildFragmentManager.popBackStack
-        s = true
-      }
-      s
-    }
-    noStack
   }
 
   override protected def onActivityCreated(savedInstanceState: Bundle) {

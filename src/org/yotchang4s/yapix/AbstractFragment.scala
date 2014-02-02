@@ -8,7 +8,26 @@ import org.yotchang4s.android.ToastMaster
 import android.widget.Toast
 
 abstract class AbstractFragment extends Fragment {
-  def onBackPressed: Boolean = false
+
+  private var _childFragment: Option[AbstractFragment] = None
+
+  protected def childFragment(childFragment: AbstractFragment) = _childFragment = Option(childFragment)
+  protected def childFragment: Option[AbstractFragment] = _childFragment
+
+  protected[yapix] def onBackPressed: Boolean = {
+    val noStack = {
+      var s = childFragment match {
+        case Some(c) => c.onBackPressed
+        case None => false
+      }
+      if (!s && getChildFragmentManager.getBackStackEntryCount() > 0) {
+        getChildFragmentManager.popBackStack
+        s = true
+      }
+      s
+    }
+    noStack
+  }
 
   protected def error(tag: String, resId: Int, e: PixivException) {
     error(tag: String, getActivity.getString(resId), e: PixivException)

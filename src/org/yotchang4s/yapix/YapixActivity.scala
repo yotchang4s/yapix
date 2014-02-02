@@ -125,7 +125,7 @@ class YapixActivity extends FragmentActivity {
     }
   }
 
-  override def onBackPressed {
+  protected override def onBackPressed {
     val callSuper = {
       val drawerState = menuDrawer.getDrawerState
       if (drawerState == MenuDrawer.STATE_OPEN || drawerState == MenuDrawer.STATE_OPENING) {

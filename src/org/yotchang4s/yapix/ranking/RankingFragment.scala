@@ -64,6 +64,7 @@ trait RankingFragment extends QuickReturnGridViewFragment {
       val tran = getChildFragmentManager.beginTransaction
 
       illustViewPagerFragment = new IllustViewPagerFragment
+      childFragment(illustViewPagerFragment)
 
       val bundle = new Bundle
       bundle.putSerializable(ArgumentKeys.IllustList, rankings.toArray)
@@ -123,21 +124,6 @@ trait RankingFragment extends QuickReturnGridViewFragment {
     if (rankings == Nil) {
       paging(nowRankingType)
     }
-  }
-
-  override def onBackPressed = {
-    val noStack = {
-      var s = false
-      if (illustViewPagerFragment != null) {
-        s = illustViewPagerFragment.onBackPressed
-      }
-      if (!s && getChildFragmentManager.getBackStackEntryCount() > 0) {
-        getChildFragmentManager.popBackStack
-        s = true
-      }
-      s
-    }
-    noStack
   }
 
   private def createRankingLabels(rankingCategory: RankingCategory): List[RankingLabel] = {
