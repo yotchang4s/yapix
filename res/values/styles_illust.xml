@@ -2,7 +2,12 @@
 
     <attr name="illustTagStyle" format="integer|reference" />
 
-    <style name="Yapix.Illust" parent="@style/Yapix.Widget"/>
+    <style name="Yapix.Illust" parent="@style/Yapix.Widget" />
+
+    <style name="Yapix.Illust.GridView" parent="Yapix.Widget.GridView">
+        <item name="android:paddingBottom">1dp</item>
+        <item name="android:paddingTop">51dp</item>
+    </style>
 
     <style name="Yapix.Illust.Detail">
         <item name="android:background">#00000000</item>

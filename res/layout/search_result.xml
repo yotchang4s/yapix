@@ -5,7 +5,7 @@
 
     <org.yotchang4s.android.GridViewV16
         android:id="@+id/searchGridview"
-        style="@style/Yapix.Widget.IllustGridView"
+        style="@style/Yapix.Widget.GridView"
         android:layout_width="match_parent"
         android:layout_height="match_parent" />
 

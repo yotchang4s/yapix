@@ -6,24 +6,24 @@
 
     <org.yotchang4s.android.ObservableGridView
         android:id="@+id/bookmarkGridview"
-        style="@style/Yapix.Widget.IllustGridView"
+        style="@style/Yapix.Illust.GridView"
         android:layout_width="match_parent"
         android:layout_height="match_parent" />
 
     <LinearLayout
         android:id="@+id/bookmarkQuickReturnSticky"
-        style="@style/Yapix.Widget.QuickReturn.Sticky" >
+        style="@style/Yapix.QuickReturn.Sticky" >
 
         <TextView
             android:id="@+id/bookmarkPrivacyTypeText"
-            style="@style/Yapix.Widget.QuickReturn.Sticky.Text" >
+            style="@style/Yapix.QuickReturn.Sticky.Text" >
 
             <!-- ダミー -->
         </TextView>
 
         <Switch
             android:id="@+id/bookmarkPrivacyTypeSwitch"
-            style="@style/Yapix.Widget.QuickReturn.Sticky.Switch" />
+            style="@style/Yapix.QuickReturn.Sticky.Switch" />
     </LinearLayout>
 
 </FrameLayout>

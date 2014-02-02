@@ -6,12 +6,12 @@
 
     <org.yotchang4s.android.ObservableGridView
         android:id="@+id/rankingGridview"
-        style="@style/Yapix.Widget.IllustGridView"
+        style="@style/Yapix.Illust.GridView"
         android:layout_width="match_parent"
         android:layout_height="match_parent" />
 
     <Spinner
         android:id="@+id/rankingQuickReturnSticky"
-        style="@style/Yapix.Widget.QuickReturn.Sticky" />
+        style="@style/Yapix.QuickReturn.Sticky" />
 
 </FrameLayout>
