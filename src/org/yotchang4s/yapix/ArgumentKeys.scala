@@ -8,4 +8,7 @@ object ArgumentKeys {
   val IllustDetail = "IllustDetail"
   val IllustList = "IllustList"
   val IllustListPosition = "IllustListPosition"
+
+  val SearchType = "SearchType"
+  val SearchKeyword = "SearchKeyword"
 }

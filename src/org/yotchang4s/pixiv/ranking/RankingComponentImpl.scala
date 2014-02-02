@@ -86,18 +86,16 @@ private[pixiv] trait RankingComponentImpl extends RankingComponent { this: Illus
         } catch {
           case e: IOException => return Left(new PixivException(IOError, e))
         }
-      for (r <- Loan(response)) {
-        try {
-          val body = response.asString("UTF-8")
+      try {
+        val body = response.asString("UTF-8")
 
-          val rankings = toRankingIllust(body)
+        val rankings = toRankingIllust(body)
 
-          Right(rankings)
+        Right(rankings)
 
-        } catch {
-          case e: PixivException => Left(e)
-          case e: IOException => Left(new HttpResponseException(response, e))
-        }
+      } catch {
+        case e: PixivException => Left(e)
+        case e: IOException => Left(new HttpResponseException(response, e))
       }
     }
 

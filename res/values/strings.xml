@@ -66,5 +66,9 @@
     <string name="searchUser">ユーザ検索</string>
     <string name="loggedSuccess">ログインしました</string>
     <string name="loggedFailure">ログインに失敗しました</string>
+    <string name="accessSuccess">ログインしました</string>
+    <string name="accessFailure">接続に失敗しました</string>
+    <string name="accessFailure">接続に失敗しました</string>
+    <string name="unknownError">不明なエラーです</string>
 
 </resources>

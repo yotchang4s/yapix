@@ -29,6 +29,8 @@ class ListGridViewImageAdapter[T <: Illust](context: Context, paddingDip: Int)
 
     ImageCacheManager.imageLoader.foreach { l =>
       view.setImageUrl(this.list(position).thumbnailImageUrl, l)
+
+      //TODO マジックナンバー
       view.setBackgroundColor(Color.rgb(0x00, 0x66, 0x99))
     }
 

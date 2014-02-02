@@ -42,27 +42,15 @@ private[pixiv] trait BookmarkComponentImpl extends BookmarkComponent { this: Ill
         } catch {
           case e: IOException => return Left(new PixivException(IOError, e))
         }
-      for (r <- Loan(response)) {
-        try {
-          val reader = response.asReader("UTF-8")
+      try {
+        val rankings = IllustDetailCsvParser.parseIllusts(response.asReader("UTF-8"))
 
-          val rankings = toBookmarkIllusts(reader)
+        Right(rankings)
 
-          Right(rankings)
-
-        } catch {
-          case e: IOException => Left(new HttpResponseException(response, e))
-          case e: Exception => Left(new PixivException(UnknownError, e))
-        }
+      } catch {
+        case e: IOException => Left(new HttpResponseException(response, e))
+        case e: Exception => Left(new PixivException(UnknownError, e))
       }
-    }
-  }
-
-  private def toBookmarkIllusts(reader: Reader): List[IllustDetail] = {
-    for (r <- Loan(new BufferedReader(reader))) {
-      Stream.continually(r.readLine).takeWhile(null !=).map { l =>
-        IllustDetailCsvParser.parse(l)
-      }.toList
     }
   }
 }

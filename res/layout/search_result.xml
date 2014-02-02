@@ -1,0 +1,12 @@
+<FrameLayout xmlns:android="http://schemas.android.com/apk/res/android"
+    android:id="@+id/searchResultContent"
+    android:layout_width="match_parent"
+    android:layout_height="match_parent" >
+
+    <org.yotchang4s.android.GridViewV16
+        android:id="@+id/searchGridview"
+        style="@style/Yapix.Widget.IllustGridView"
+        android:layout_width="match_parent"
+        android:layout_height="match_parent" />
+
+</FrameLayout>

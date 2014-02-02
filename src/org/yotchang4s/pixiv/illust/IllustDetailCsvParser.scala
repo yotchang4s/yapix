@@ -7,6 +7,10 @@ import org.yotchang4s.pixiv.user.UserId
 import java.text.SimpleDateFormat
 import org.yotchang4s.pixiv.PixivException
 import org.yotchang4s.pixiv.PixivException.UnknownError
+import java.io.Reader
+import org.yotchang4s.scala.Loan
+import org.yotchang4s.scala.Loan._
+import java.io.BufferedReader
 
 private[pixiv] object IllustDetailCsvParser {
   def parse(line: String): IllustDetail = {
@@ -48,5 +52,13 @@ private[pixiv] object IllustDetailCsvParser {
       columns(16).toInt, // 評価
       columns(22).toInt, // ブックマーク数
       new User(UserId(columns(1)), columns(5), columns(28))) // ユーザ情報(ID, 名前、プロフィール画像)
+  }
+
+  def parseIllusts(reader: Reader): List[IllustDetail] = {
+    for (r <- Loan(new BufferedReader(reader))) {
+      Stream.continually(r.readLine).takeWhile(null !=).map { l =>
+        IllustDetailCsvParser.parse(l)
+      }.toList
+    }
   }
 }

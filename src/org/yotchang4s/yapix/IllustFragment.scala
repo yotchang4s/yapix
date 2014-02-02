@@ -112,7 +112,7 @@ class IllustFragment extends AbstractFragment { self =>
         setIllustDetail(d)
       case Left(e) =>
         illustDetailProgressBar.setVisibility(View.GONE)
-        error(TAG, e)
+        error(TAG, R.string.accessFailure, e)
 
     }(new UIExecutionContext)
   }
@@ -210,7 +210,7 @@ class IllustFragment extends AbstractFragment { self =>
         }
 
         def onErrorResponse(e: VolleyError) {
-          error(TAG, new PixivException(IOError))
+          error(TAG, R.string.accessFailure, new PixivException(IOError))
         }
       })
     }

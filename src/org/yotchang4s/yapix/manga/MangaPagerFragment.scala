@@ -47,7 +47,7 @@ class MangaPagerFragment extends AbstractFragment {
     getArguments.getSerializable(ArgumentKeys.IllustDetail) match {
       case i: IllustDetail if (i.manga) =>
         asyncManga(i.identity)
-      case _ => error(TAG, new PixivException(UnknownError, "Argument is not IllustDetail"))
+      case _ => error(TAG, R.string.unknownError, new PixivException(UnknownError, "Argument is not IllustDetail"))
     }
   }
 
@@ -58,14 +58,14 @@ class MangaPagerFragment extends AbstractFragment {
 
     f.onSuccess {
       case Right(ms) => setMangaList(ms)
-      case Left(e) => error(TAG, e)
+      case Left(e) => error(TAG, R.string.accessFailure, e)
     }(new UIExecutionContext)
   }
 
   private def setMangaList(mangaList: List[IllustDetail]) {
     mangaList match {
       case Nil =>
-        error(TAG, throw new PixivException(UnknownError, "IllustList is Nil"))
+        error(TAG, R.string.unknownError, throw new PixivException(UnknownError, "IllustList is Nil"))
 
       case mx =>
         adapter.setIllusts(mx)
