@@ -1,6 +1,9 @@
 package org.yotchang4s.yapix
 
 object ArgumentKeys {
+  val MenuDrawerActiveViewId = "MenuDrawerActiveViewId"
+  val MainFragmentClassName = "MainFragmentClassName"
+
   val PixivId = "PixivId"
   val PixivPassword = "PixivPassword"
 

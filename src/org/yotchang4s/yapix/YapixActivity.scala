@@ -64,8 +64,24 @@ class YapixActivity extends FragmentActivity {
       menuDrawerActiveViewChange(v)
     }*/
 
-    changeFragment(classOf[OverallRankingFragment])
-    menuDrawerActiveViewChange(findViewById(R.id.menuDrawerRankingOverall))
+    Option(savedInstanceState) match {
+      case Some(s) =>
+        val activeFragmentClassName = savedInstanceState.getString(ArgumentKeys.MainFragmentClassName)
+        val menuDrawerActiveViewId = savedInstanceState.getInt(ArgumentKeys.MenuDrawerActiveViewId)
+
+        changeFragment(Class.forName(activeFragmentClassName).asInstanceOf[Class[Fragment]])
+        menuDrawerActiveViewChange(findViewById(menuDrawerActiveViewId))
+      case None =>
+        changeFragment(classOf[OverallRankingFragment])
+        menuDrawerActiveViewChange(findViewById(R.id.menuDrawerRankingOverall))
+    }
+  }
+
+  protected override def onSaveInstanceState(savedInstanceState: Bundle) {
+    super.onSaveInstanceState(savedInstanceState)
+
+    savedInstanceState.putString(ArgumentKeys.MainFragmentClassName, fragment.getClass.getName)
+    savedInstanceState.putInt(ArgumentKeys.MenuDrawerActiveViewId, activeViewId)
   }
 
   private def changeFragment[T <: Fragment](fragmentClass: Class[T]) {
