@@ -19,10 +19,11 @@ import org.yotchang4s.android.UIExecutionContext
 import org.yotchang4s.pixiv.illust._
 import org.yotchang4s.pixiv.PixivException
 import org.yotchang4s.pixiv.PixivException.IOError
-import org.yotchang4s.yapix.volley.ImageListenerJava
-import org.yotchang4s.yapix.volley.ImageContainerJava
+import org.yotchang4s.yapix.volley._
 import org.yotchang4s.yapix.manga.MangaActivity
 import org.yotchang4s.yapix.YapixConfig.yapixConfig
+import org.yotchang4s.yapix.search.SearchResultFragment
+import org.yotchang4s.yapix.search.SearchFragment
 
 class IllustFragment extends AbstractFragment { self =>
   private val TAG = getClass.getSimpleName
@@ -139,9 +140,25 @@ class IllustFragment extends AbstractFragment { self =>
 
     val tagContainer = findViewById[ViewGroup](R.id.illustTags)
     d.tags.foreach { t =>
-      val tagTextView = new TextView(activity, null, R.attr.illustTagStyle)
+      val tagTextView = new Button(activity, null, R.attr.illustTagStyle)
       tagTextView.setText(t)
       tagContainer.addView(tagTextView)
+      tagTextView.onClicks += { v =>
+        val tran = getChildFragmentManager.beginTransaction
+
+        val f = new SearchResultFragment
+        childFragment(f)
+
+        val bundle = new Bundle
+        bundle.putSerializable(ArgumentKeys.SearchType, SearchFragment.Tag)
+        bundle.putString(ArgumentKeys.SearchKeyword, tagTextView.getText.toString)
+
+        f.setArguments(bundle)
+
+        tran.add(R.id.illustContent, f)
+        tran.addToBackStack(null)
+        tran.commit
+      }
     }
 
     findViewById[TextView](R.id.illustViewCount).setText(d.viewCount.toString)
