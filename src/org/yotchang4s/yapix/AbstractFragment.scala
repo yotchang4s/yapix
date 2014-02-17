@@ -40,6 +40,6 @@ abstract class AbstractFragment extends Fragment {
       case t =>
         Log.e(tag, message, e)
     }
-    ToastMaster.makeText(getActivity, message, Toast.LENGTH_SHORT)
+    ToastMaster.makeText(getActivity, message, Toast.LENGTH_SHORT).show
   }
 }
