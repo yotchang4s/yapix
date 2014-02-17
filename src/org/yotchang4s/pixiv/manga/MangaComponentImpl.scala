@@ -45,8 +45,8 @@ private[pixiv] trait MangaComponentImpl extends MangaComponent {
           Right(Iterator.continually(reader.readLine).takeWhile(null !=).map(IllustDetailCsvParser.parse(_)).toList)
         }
       } catch {
-        case e: IOException => throw new PixivException(IOError, e)
-        case e: Exception => throw new PixivException(UnknownError, e)
+        case e: IOException => Left(new PixivException(IOError, e))
+        case e: Exception => Left(new PixivException(UnknownError, e))
       }
     }
   }
