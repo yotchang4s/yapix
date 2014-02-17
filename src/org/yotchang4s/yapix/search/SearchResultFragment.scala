@@ -7,6 +7,7 @@ import android.util.Log
 import android.view._
 import android.widget.AbsListView._
 import android.widget._
+
 import org.yotchang4s.android._
 import org.yotchang4s.android.Listeners._
 import org.yotchang4s.pixiv._
@@ -14,7 +15,7 @@ import org.yotchang4s.pixiv.illust._
 import org.yotchang4s.pixiv.ranking._
 import org.yotchang4s.yapix.YapixConfig._
 import org.yotchang4s.yapix._
-import android.support.v4.app.FragmentManager.OnBackStackChangedListener
+
 import org.yotchang4s.pixiv.tag._
 
 class SearchResultFragment extends AbstractFragment {
