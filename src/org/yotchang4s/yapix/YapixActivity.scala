@@ -129,17 +129,33 @@ class YapixActivity extends FragmentActivity {
   }
 
   protected override def onBackPressed {
-    finishWaitTime match {
-      case Some(t) =>
-        if (System.currentTimeMillis - t <= 2000L) {
-          moveTaskToBack(true)
-          finishWaitTime = None
-        } else {
-          finishWait
-        }
+    val callSuper = {
+      val drawerState = menuDrawer.getDrawerState
+      if (drawerState == MenuDrawer.STATE_OPEN || drawerState == MenuDrawer.STATE_OPENING) {
+        menuDrawer.closeMenu
+        false
 
-      case None =>
-        finishWait
+      } else if (fragment.isInstanceOf[AbstractFragment]) {
+        var noStack = fragment.asInstanceOf[AbstractFragment].onBackPressed
+
+        !noStack
+      } else {
+        true
+      }
+    }
+    if (callSuper) {
+      finishWaitTime match {
+        case Some(t) =>
+          if (System.currentTimeMillis - t <= 2000L) {
+            moveTaskToBack(true)
+            finishWaitTime = None
+          } else {
+            finishWait
+          }
+
+        case None =>
+          finishWait
+      }
     }
 
     def finishWait {
