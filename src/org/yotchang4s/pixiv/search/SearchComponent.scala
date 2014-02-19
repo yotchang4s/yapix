@@ -9,6 +9,8 @@ trait SearchComponent {
   val search: SearchRepository
 
   trait SearchRepository {
-    def searchTag(tag: Tag, page: Int)(implicit config: Config): Either[PixivException, List[IllustDetail]]
+    def search(tag: Tag, page: Int)(implicit config: Config): Either[PixivException, List[IllustDetail]]
+
+    def search(caption: Caption, page: Int)(implicit config: Config): Either[PixivException, List[IllustDetail]]
   }
 }

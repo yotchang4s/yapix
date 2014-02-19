@@ -19,11 +19,10 @@ import org.yotchang4s.yapix._
 import org.yotchang4s.pixiv.tag._
 
 class SearchResultFragment extends AbstractFragment {
-  import SearchFragment._
 
   private val TAG = getClass.getSimpleName
 
-  private[this] var searchType: SearchType = null
+  private[this] var searchType: Search.Type = null
   private[this] var searchKeyword: String = ""
 
   private[this] var searchGridAdapter: ListGridViewImageAdapter[IllustDetail] = null
@@ -44,7 +43,7 @@ class SearchResultFragment extends AbstractFragment {
   protected override def onCreate(savedInstanceState: Bundle) {
     super.onCreate(savedInstanceState)
 
-    searchType = getArguments.get(ArgumentKeys.SearchType).asInstanceOf[SearchType]
+    searchType = getArguments.get(ArgumentKeys.SearchType).asInstanceOf[Search.Type]
     searchKeyword = getArguments.getString(ArgumentKeys.SearchKeyword)
   }
 
@@ -130,8 +129,9 @@ class SearchResultFragment extends AbstractFragment {
 
     val f = future {
       searchType match {
-        case Tag =>
-          Pixiv.search.searchTag(new Tag(TagId(searchKeyword)), searchPage)
+        case Search.Tag => Pixiv.search.search(new Tag(TagId(searchKeyword)), searchPage)
+        case Search.Caption => Pixiv.search.search(Caption(searchKeyword), searchPage)
+
       }
     }
 

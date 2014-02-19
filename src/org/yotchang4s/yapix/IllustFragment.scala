@@ -24,6 +24,7 @@ import org.yotchang4s.yapix.manga.MangaActivity
 import org.yotchang4s.yapix.YapixConfig.yapixConfig
 import org.yotchang4s.yapix.search.SearchResultFragment
 import org.yotchang4s.yapix.search.SearchFragment
+import org.yotchang4s.yapix.search.Search
 
 class IllustFragment extends AbstractFragment { self =>
   private val TAG = getClass.getSimpleName
@@ -150,7 +151,7 @@ class IllustFragment extends AbstractFragment { self =>
         childFragment(f)
 
         val bundle = new Bundle
-        bundle.putSerializable(ArgumentKeys.SearchType, SearchFragment.Tag)
+        bundle.putSerializable(ArgumentKeys.SearchType, Search.Tag)
         bundle.putString(ArgumentKeys.SearchKeyword, tagTextView.getText.toString)
 
         f.setArguments(bundle)
