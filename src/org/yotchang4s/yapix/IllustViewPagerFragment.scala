@@ -24,7 +24,7 @@ class IllustViewPagerFragment extends AbstractFragment {
   private[this] var illustPosition: Int = 0
 
   private[this] var viewPager: ViewPager = null
-  private[this] var adapter: ListFragmentStatePagerAdapter = null
+  private[this] var adapter: IllustPagerAdapter = null
 
   setRetainInstance(true)
 
@@ -83,6 +83,17 @@ class IllustViewPagerFragment extends AbstractFragment {
   private def setMangaList(mangaList: List[IllustDetail]) {
     adapter.setIllustList(mangaList)
     adapter.notifyDataSetChanged
+  }
+
+  protected[yapix] override def onBackPressed = {
+    val f = adapter.getFragment(viewPager.getCurrentItem)
+    if (f.isInstanceOf[AbstractFragment]) {
+      val af = f.asInstanceOf[AbstractFragment]
+      childFragment(af)
+      super.onBackPressed
+    } else {
+      false
+    }
   }
 
   private def error(e: PixivException) {
