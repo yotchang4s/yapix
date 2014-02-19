@@ -12,6 +12,7 @@ import org.yotchang4s.yapix.ranking._
 import android.support.v4.app._
 import android.util.Log
 import org.yotchang4s.yapix.search.SearchFragment
+import org.yotchang4s.android.ToastMaster
 
 class YapixActivity extends FragmentActivity {
   private[this] val TAG = getClass.getName
@@ -19,6 +20,8 @@ class YapixActivity extends FragmentActivity {
   private[this] var fragment: Fragment = null
   private[this] var menuDrawer: MenuDrawer = null
   private[this] var activeViewId = 0;
+
+  private[this] var finishWaitTime: Option[Long] = None
 
   override def onCreate(savedInstanceState: Bundle) {
     super.onCreate(savedInstanceState)
@@ -126,20 +129,22 @@ class YapixActivity extends FragmentActivity {
   }
 
   protected override def onBackPressed {
-    val callSuper = {
-      val drawerState = menuDrawer.getDrawerState
-      if (drawerState == MenuDrawer.STATE_OPEN || drawerState == MenuDrawer.STATE_OPENING) {
-        menuDrawer.closeMenu
-        false
+    finishWaitTime match {
+      case Some(t) =>
+        if (System.currentTimeMillis - t <= 2000L) {
+          moveTaskToBack(true)
+          finishWaitTime = None
+        } else {
+          finishWait
+        }
 
-      } else if (fragment != null && fragment.isInstanceOf[AbstractFragment]) {
-        !fragment.asInstanceOf[AbstractFragment].onBackPressed
-      } else {
-        true
-      }
+      case None =>
+        finishWait
     }
-    if (callSuper) {
-      moveTaskToBack(true)
+
+    def finishWait {
+      finishWaitTime = Some(System.currentTimeMillis)
+      ToastMaster.makeText(this, R.string.terminationNotice, Toast.LENGTH_SHORT).show
     }
   }
 }

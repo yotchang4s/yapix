@@ -70,5 +70,6 @@
     <string name="accessFailure">接続に失敗しました</string>
     <string name="accessFailure">接続に失敗しました</string>
     <string name="unknownError">不明なエラーです</string>
+    <string name="terminationNotice">もう一度Backキーを押すと終了します</string>
 
 </resources>
